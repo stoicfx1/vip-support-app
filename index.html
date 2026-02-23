@@ -48,15 +48,6 @@
             padding: 18px 14px 44px;
         }
 
-        /* Greek key pattern as SVG data URI */
-        .greek-line {
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
-            position: relative;
-            overflow: visible;
-        }
-
         /* ─── CARD ─── */
         .card {
             width: 100%;
@@ -348,9 +339,6 @@
             letter-spacing: 0.3px;
         }
         .plan-card.selected .plan-name { color: var(--text); }
-        .plan-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
         .plan-card.plan-other {
             grid-column: 1 / -1;
             display: flex;
@@ -586,6 +574,10 @@
             opacity: 0;
             animation: fade-up 0.4s ease forwards 1.25s;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
     </style>
 </head>
 <body>
@@ -624,7 +616,7 @@
             </div>
             <div class="input-wrap">
                 <span class="input-icon">✉</span>
-                <input type="email" id="ib_email" placeholder="partner@domain.com" autocomplete="off" autocapitalize="none" inputmode="email">
+                <input type="email" id="ib_email" placeholder="partner@domain.com" autocomplete="email" autocapitalize="none" inputmode="email" enterkeyhint="next">
             </div>
             <div class="field-error" id="ib_err">Enter a valid email address.</div>
         </div>
@@ -636,7 +628,7 @@
             </div>
             <div class="input-wrap">
                 <span class="input-icon">✉</span>
-                <input type="email" id="client_email" placeholder="client@domain.com" autocomplete="off" autocapitalize="none" inputmode="email">
+                <input type="email" id="client_email" placeholder="client@domain.com" autocomplete="email" autocapitalize="none" inputmode="email" enterkeyhint="done">
             </div>
             <div class="field-error" id="client_err">Enter a valid email address.</div>
         </div>
@@ -714,12 +706,20 @@
 </div>
 
 <script>
+    // ─── Telegram init
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.expand(); tg.setHeaderColor?.("#111317"); }
+    if (tg) {
+        tg.expand();
+        tg.setHeaderColor?.("#111317");
+        tg.ready?.();
+    }
 
-    // ─── Ref number
+    // ─── Ref number (prefer bot-passed param, fall back to 6-digit number)
     const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get("ref") || urlParams.get("start_param") || String(Math.floor(100000 + Math.random() * 900000));
+    const ref = urlParams.get("ref")
+             || urlParams.get("start_param")
+             || tg?.initDataUnsafe?.start_param
+             || String(Math.floor(100000 + Math.random() * 900000));
     document.getElementById("ref-display").textContent = ref;
     document.getElementById("success-ref-val").textContent = ref;
 
@@ -745,82 +745,118 @@
 
     // ─── Email validation
     const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     function validateField(inputId, errId) {
         const el = document.getElementById(inputId);
         const err = document.getElementById(errId);
         const v = el.value.trim();
-        if (v && !emailRx.test(v)) {
-            el.classList.add("error"); el.classList.remove("valid");
-            err.style.display = "block"; return false;
-        } else if (emailRx.test(v)) {
-            el.classList.remove("error"); el.classList.add("valid");
-            err.style.display = "none"; return true;
-        } else {
-            el.classList.remove("error", "valid");
-            err.style.display = "none"; return false;
-        }
+        const isValid = !!v && emailRx.test(v);
+        el.classList.toggle("valid", isValid);
+        el.classList.toggle("error", !!v && !isValid);
+        el.setAttribute("aria-invalid", (!!v && !isValid) ? "true" : "false");
+        err.style.display = (!!v && !isValid) ? "block" : "none";
+        return isValid;
     }
 
     function checkReady() {
-        const otherOk = selectedPlan !== "Other" || document.getElementById("other_plan_input").value.trim().length > 0;
-        const ok = emailRx.test(document.getElementById("ib_email").value.trim())
-                && emailRx.test(document.getElementById("client_email").value.trim())
-                && !!selectedPlan
-                && otherOk;
-        const btn = document.getElementById("submit-btn");
-        btn.disabled = !ok;
-        document.getElementById("btn-label").textContent = ok ? "Submit Request" : "Submit Request";
+        const ib     = document.getElementById("ib_email").value.trim().toLowerCase();
+        const client = document.getElementById("client_email").value.trim().toLowerCase();
+        const other  = document.getElementById("other_plan_input").value.trim();
+        const clientErr = document.getElementById("client_err");
+        const clientEl  = document.getElementById("client_email");
+
+        const ibOk     = emailRx.test(ib);
+        const clientOk = emailRx.test(client);
+        const notSame  = ib !== client;
+        const otherOk  = selectedPlan !== "Other" || other.length > 0;
+
+        // Same-email inline error
+        if (ibOk && clientOk && !notSame) {
+            clientErr.textContent = "Client email must differ from IB email.";
+            clientErr.style.display = "block";
+            clientEl.classList.add("error");
+            clientEl.classList.remove("valid");
+        } else if (clientOk) {
+            clientErr.textContent = "Enter a valid email address.";
+            if (clientErr.textContent !== "Enter a valid email address.") clientErr.style.display = "none";
+        }
+
+        const ok = ibOk && clientOk && notSame && !!selectedPlan && otherOk;
+        document.getElementById("submit-btn").disabled = !ok;
         document.getElementById("btn-arrow").style.display = ok ? "" : "none";
     }
 
-    ["ib_email","client_email"].forEach(id => {
+    ["ib_email", "client_email"].forEach(id => {
         const errId = id === "ib_email" ? "ib_err" : "client_err";
         document.getElementById(id).addEventListener("input", () => {
             validateField(id, errId);
             checkReady();
         });
     });
-
     document.getElementById("other_plan_input").addEventListener("input", checkReady);
 
     // ─── Submit
     async function sendData() {
-        if (!emailRx.test(document.getElementById("ib_email").value.trim())) { validateField("ib_email","ib_err"); return; }
-        if (!emailRx.test(document.getElementById("client_email").value.trim())) { validateField("client_email","client_err"); return; }
-        if (!selectedPlan) { document.getElementById("plan_err").style.display = "block"; return; }
+        const ib     = document.getElementById("ib_email").value.trim().toLowerCase();
+        const client = document.getElementById("client_email").value.trim().toLowerCase();
+        const other  = document.getElementById("other_plan_input").value.trim();
 
+        // Final guards
+        if (!emailRx.test(ib))     { validateField("ib_email", "ib_err"); return; }
+        if (!emailRx.test(client)) { validateField("client_email", "client_err"); return; }
+        if (ib === client) {
+            const el = document.getElementById("client_email");
+            const err = document.getElementById("client_err");
+            err.textContent = "Client email must differ from IB email.";
+            err.style.display = "block";
+            el.classList.add("error"); el.classList.remove("valid");
+            return;
+        }
+        if (!selectedPlan) { document.getElementById("plan_err").style.display = "block"; return; }
+        if (selectedPlan === "Other" && !other) {
+            document.getElementById("plan_err").textContent = "Please describe the commission plan.";
+            document.getElementById("plan_err").style.display = "block";
+            return;
+        }
+
+        // Loading state
         const btn = document.getElementById("submit-btn");
         document.getElementById("spinner").style.display = "block";
         document.getElementById("btn-label").textContent = "Submitting Request…";
         document.getElementById("btn-arrow").style.display = "none";
         btn.disabled = true;
 
-        const userId = tg?.initDataUnsafe?.user?.id || 1775819196;
+        const payload = {
+            ref,
+            ib_email:          ib,
+            client_email:      client,
+            ib_plan:           selectedPlan === "Other" ? other : selectedPlan,
+            telegram_user_id:  Number(tg?.initDataUnsafe?.user?.id || 1775819196),
+            telegram_init_data: tg?.initData || ""
+        };
 
         try {
+            // NOTE: mode:"no-cors" in use until CORS headers are enabled on the n8n webhook response.
+            // Once enabled: remove mode:"no-cors" and add `if (!res.ok) throw new Error(res.status)`
             await fetch("https://stoicfx.app.n8n.cloud/webhook/82d3a4a1-1978-4820-a27f-4378ba21f6f0", {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    client_email: document.getElementById("client_email").value.trim(),
-                    ib_email: document.getElementById("ib_email").value.trim(),
-                    ib_plan: selectedPlan === "Other"
-                        ? document.getElementById("other_plan_input").value.trim()
-                        : selectedPlan,
-                    telegram_user_id: Number(userId)
-                })
+                body: JSON.stringify(payload)
             });
+
+            tg?.HapticFeedback?.notificationOccurred?.("success");
             document.getElementById("form-state").style.display = "none";
-            const s = document.getElementById("success-state");
-            s.style.display = "flex";
+            document.getElementById("success-state").style.display = "flex";
             setTimeout(() => tg?.close(), 3500);
+
         } catch (e) {
+            tg?.HapticFeedback?.notificationOccurred?.("error");
             document.getElementById("spinner").style.display = "none";
             document.getElementById("btn-label").textContent = "Submit Request";
             document.getElementById("btn-arrow").style.display = "";
             btn.disabled = false;
-            (tg?.showAlert || alert)("Submission failed. Please try again or contact your account manager.");
+            (tg?.showAlert ?? alert)("Submission failed. Please try again or contact your account manager.");
         }
     }
 </script>
