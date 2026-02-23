@@ -58,20 +58,32 @@
             const ibEmail = document.getElementById('ib_email').value;
             const ibPlan = document.getElementById('ib_plan').value;
 
-            // Simple validation to ensure emails are provided
             if (!clientEmail || !ibEmail) {
                 tg.showAlert("Please fill out both email fields.");
                 return;
             }
 
+            tg.MainButton.showProgress();
+
             const data = {
-                type: "ib_move",
                 client_email: clientEmail,
                 ib_email: ibEmail,
-                ib_plan: ibPlan
+                ib_plan: ibPlan,
+                telegram_user_id: tg.initDataUnsafe?.user?.id
             };
 
-            tg.sendData(JSON.stringify(data)); 
+            fetch('https://stoicfx.app.n8n.cloud/webhook-test/3a667794-774f-4538-8faa-6219f3aa43b2', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                tg.close();
+            })
+            .catch(error => {
+                tg.MainButton.hideProgress();
+                tg.showAlert("Error submitting. Please try again.");
+            });
         });
     </script>
 </body>
