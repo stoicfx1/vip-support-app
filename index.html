@@ -193,7 +193,7 @@
     </div>
 <div id="category-select-screen" style="display:none; padding: 20px 24px 24px;">
     <div class="section-label" style="margin-top:4px"><div class="section-label-line"></div><span class="section-label-text">Select Request Type</span><div class="section-label-line"></div></div>
-    <div class="toggle-grid" style="gap:10px; margin-top:4px;">
+    <div class="toggle-grid toggle-grid-2" style="gap:10px; margin-top:4px;">
         <div class="toggle-card" onclick="selectCategory('ib_move')"><div class="toggle-icon">🔄</div><div class="toggle-name">IB Move</div></div>
         <div class="toggle-card" onclick="selectCategory('deposit')"><div class="toggle-icon">💰</div><div class="toggle-name">Deposit Issue</div></div>
         <div class="toggle-card" onclick="selectCategory('withdrawal')"><div class="toggle-icon">💸</div><div class="toggle-name">Withdrawal Issue</div></div>
@@ -273,10 +273,8 @@ const CONFIGS = {
     trading:    { title: 'Trading <em>Issue</em><br>Report',        sub: 'Experiencing a trading problem? Share the details below and our team will investigate.', success: 'Trading Issue<br>Reported' }
 };
 
-const cfg = CONFIGS[category] || CONFIGS.ib_move;
-document.getElementById('header-title').innerHTML = cfg.title;
-document.getElementById('header-sub').textContent = cfg.sub;
-document.getElementById('success-title').innerHTML = cfg.success;
+document.getElementById('header-title').innerHTML = 'VIP <em>Support</em><br>Portal';
+document.getElementById('header-sub').textContent = 'Select the type of request you need assistance with.';
 
 // ── Validation helpers ──
 const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -679,3 +677,4 @@ document.getElementById('category-select-screen').style.display = 'block';
 </script>
 </body>
 </html>
+
