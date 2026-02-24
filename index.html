@@ -390,7 +390,7 @@ function renderDeposit() {
     <div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Deposit Destination</span><div class="section-label-line"></div></div>
     <div class="toggle-grid toggle-grid-2" id="dest-grid">
         <div class="toggle-card" data-dest="Trading Account" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon">📊</div><div class="toggle-name">Trading Account</div></div>
-        <div class="toggle-card" data-dest="Client Wallet" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon">👛</div><div class="toggle-name">Client Wallet</div></div>
+        <div class="toggle-card" data-dest="Client Wallet" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.75"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0"/><path d="M2 10h20"/></svg></div><div class="toggle-name">Client Wallet</div></div>
     </div>
     <div class="toggle-err" id="dest_err">Please select a destination.</div>
     <div class="reveal-wrap" id="account-wrap">
@@ -452,7 +452,7 @@ function renderWithdrawal() {
     <div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Withdrawal Initiated From</span><div class="section-label-line"></div></div>
     <div class="toggle-grid toggle-grid-2" id="dest-grid">
         <div class="toggle-card" data-dest="Trading Account" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon">📊</div><div class="toggle-name">Trading Account</div></div>
-        <div class="toggle-card" data-dest="Client Wallet" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon">👛</div><div class="toggle-name">Client Wallet</div></div>
+        <div class="toggle-card" data-dest="Client Wallet" onclick="selectDestination(this)"><div class="toggle-check">✓</div><div class="toggle-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.75"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0"/><path d="M2 10h20"/></svg></div><div class="toggle-name">Client Wallet</div></div>
     </div>
     <div class="toggle-err" id="dest_err">Please select where the withdrawal was initiated from.</div>
     <div class="reveal-wrap" id="account-wrap">
@@ -654,3 +654,4 @@ const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: ren
 </script>
 </body>
 </html>
+
