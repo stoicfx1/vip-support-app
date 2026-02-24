@@ -230,9 +230,10 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.expand(); tg.setHeaderColor?.('#111317'); tg.ready?.(); }
 
-const urlParams = new URLSearchParams(window.location.search);
-const ref = urlParams.get('ref') || String(Math.floor(100000 + Math.random() * 900000));
-const category = urlParams.get('category') || 'ib_move';
+const startParam = tg?.initDataUnsafe?.start_param || '';
+const [category, ref] = startParam.includes('_')
+    ? [startParam.substring(0, startParam.lastIndexOf('_')), startParam.substring(startParam.lastIndexOf('_') + 1)]
+    : ['ib_move', String(Math.floor(100000 + Math.random() * 900000))];
 
 document.getElementById('ref-display').textContent = ref;
 document.getElementById('success-ref-val').textContent = ref;
@@ -654,4 +655,5 @@ const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: ren
 </script>
 </body>
 </html>
+
 
