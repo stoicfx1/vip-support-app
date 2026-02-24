@@ -191,7 +191,15 @@
             <span class="ref-value"><span style="opacity:0.45;font-weight:400;letter-spacing:0.5px">REF&nbsp;</span><span id="ref-display">—</span></span>
         </div>
     </div>
-
+<div id="category-select-screen" style="display:none; padding: 20px 24px 24px;">
+    <div class="section-label" style="margin-top:4px"><div class="section-label-line"></div><span class="section-label-text">Select Request Type</span><div class="section-label-line"></div></div>
+    <div class="toggle-grid" style="gap:10px; margin-top:4px;">
+        <div class="toggle-card" onclick="selectCategory('ib_move')"><div class="toggle-icon">🔄</div><div class="toggle-name">IB Move</div></div>
+        <div class="toggle-card" onclick="selectCategory('deposit')"><div class="toggle-icon">💰</div><div class="toggle-name">Deposit Issue</div></div>
+        <div class="toggle-card" onclick="selectCategory('withdrawal')"><div class="toggle-icon">💸</div><div class="toggle-name">Withdrawal Issue</div></div>
+        <div class="toggle-card" onclick="selectCategory('trading')"><div class="toggle-icon">📈</div><div class="toggle-name">Trading Issue</div></div>
+    </div>
+</div>
     <div class="form-body" id="form-state">
         <div id="form-fields"></div>
         <div class="submit-rule"></div>
@@ -231,9 +239,22 @@ const tg = window.Telegram?.WebApp;
 if (tg) { tg.expand(); tg.setHeaderColor?.('#111317'); tg.ready?.(); }
 
 const startParam = tg?.initDataUnsafe?.start_param || '';
-const [category, ref] = startParam.includes('_')
-    ? [startParam.substring(0, startParam.lastIndexOf('_')), startParam.substring(startParam.lastIndexOf('_') + 1)]
-    : ['ib_move', String(Math.floor(100000 + Math.random() * 900000))];
+const ref = startParam || String(Math.floor(100000 + Math.random() * 900000));
+let category = '';
+
+document.getElementById('ref-display').textContent = ref;
+document.getElementById('success-ref-val').textContent = ref;
+
+function selectCategory(cat) {
+    category = cat;
+    const cfg = CONFIGS[category];
+    document.getElementById('header-title').innerHTML = cfg.title;
+    document.getElementById('header-sub').textContent = cfg.sub;
+    document.getElementById('success-title').innerHTML = cfg.success;
+    document.getElementById('category-select-screen').style.display = 'none';
+    document.getElementById('form-state').style.display = 'block';
+    (renders[category] || renderIbMove)();
+}
 
 document.getElementById('ref-display').textContent = ref;
 document.getElementById('success-ref-val').textContent = ref;
@@ -651,9 +672,10 @@ async function sendData() {
 
 // ── Init ──
 const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: renderWithdrawal, trading: renderTrading };
-(renders[category] || renderIbMove)();
+
+// Show category selection screen on load
+document.getElementById('form-state').style.display = 'none';
+document.getElementById('category-select-screen').style.display = 'block';
 </script>
 </body>
 </html>
-
-
