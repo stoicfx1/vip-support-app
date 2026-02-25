@@ -671,12 +671,29 @@ async function sendData() {
 // ── Init ──
 const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: renderWithdrawal, trading: renderTrading };
 
+// ── Delete button message on load ──
+async function deleteButtonMessage() {
+    const userId = tg?.initDataUnsafe?.user?.id;
+    if (!ref || !userId) return;
+    try {
+        await fetch('https://stoicfx.app.n8n.cloud/webhook/stoicfx-delete-button', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ref, telegram_user_id: Number(userId) })
+        });
+    } catch(e) {
+        // silent fail — don't block app if delete fails
+    }
+}
+
 // Show category selection screen on load
 document.getElementById('form-state').style.display = 'none';
 document.getElementById('category-select-screen').style.display = 'block';
+deleteButtonMessage();
 </script>
 </body>
 </html>
+
 
 
 
