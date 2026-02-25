@@ -676,12 +676,10 @@ async function deleteButtonMessage() {
     const userId = tg?.initDataUnsafe?.user?.id;
     if (!ref || !userId) return;
     try {
-        await fetch('https://stoicfx.app.n8n.cloud/webhook/stoicfx-delete-button', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ref, telegram_user_id: Number(userId) })
-        });
+        await fetch(
+            `https://stoicfx.app.n8n.cloud/webhook/stoicfx-delete-button?ref=${ref}&telegram_user_id=${userId}`,
+            { method: 'GET', mode: 'no-cors' }
+        );
     } catch(e) {
         // silent fail
     }
@@ -694,4 +692,5 @@ deleteButtonMessage();
 </script>
 </body>
 </html>
+
 
