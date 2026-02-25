@@ -678,11 +678,12 @@ async function deleteButtonMessage() {
     try {
         await fetch('https://stoicfx.app.n8n.cloud/webhook/stoicfx-delete-button', {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ref, telegram_user_id: Number(userId) })
         });
     } catch(e) {
-        // silent fail — don't block app if delete fails
+        // silent fail
     }
 }
 
@@ -693,3 +694,4 @@ deleteButtonMessage();
 </script>
 </body>
 </html>
+
