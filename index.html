@@ -653,7 +653,7 @@ async function sendData() {
     document.getElementById('btn-arrow').style.display = 'none';
     btn.disabled = true;
     try {
-        await fetch(WEBHOOKS[category], { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildPayload()) });
+        await fetch(WEBHOOKS[category], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildPayload()) });
         tg?.HapticFeedback?.notificationOccurred?.('success');
         document.getElementById('form-state').style.display = 'none';
         document.getElementById('success-state').style.display = 'flex';
@@ -700,6 +700,7 @@ deleteButtonMessage();
 </script>
 </body>
 </html>
+
 
 
 
