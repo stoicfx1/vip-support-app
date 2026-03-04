@@ -35,15 +35,14 @@
         @keyframes rise { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         .card-top-bar { height: 3px; background: linear-gradient(90deg, var(--red) 0%, rgba(232,57,42,0.3) 100%); }
 
-        /* HEADER */
-        .header { padding: 22px 24px 20px; border-bottom: 1px solid var(--border); }
-        .brand-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .header { padding: 20px 24px 18px; border-bottom: 1px solid var(--border); }
+        .brand-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
         .brand-logo img { height: 26px; width: auto; display: block; }
         .vip-pill { display: flex; align-items: center; gap: 6px; background: var(--red-dim); border: 1px solid rgba(232,57,42,0.2); border-radius: 20px; padding: 4px 10px 4px 8px; }
         .vip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); box-shadow: 0 0 5px var(--red); animation: blink 2.5s ease-in-out infinite; }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
         .vip-text { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); }
-        .header-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; line-height: 1.08; letter-spacing: -0.3px; color: var(--text); margin-bottom: 6px; }
+        .header-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; line-height: 1.08; letter-spacing: -0.3px; color: var(--text); margin-bottom: 6px; }
         .header-title em { font-style: italic; color: var(--red); }
         .header-sub { font-size: 12.5px; color: var(--text-sub); font-weight: 300; line-height: 1.55; }
         .ref-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 10px 13px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; }
@@ -102,6 +101,12 @@
         .toggle-name { font-size: 11.5px; font-weight: 700; color: var(--text-sub); }
         .toggle-card.selected .toggle-name { color: var(--text); }
         .toggle-err { font-size: 11px; color: rgba(232,57,42,0.85); margin-top: 8px; display: none; }
+        /* Full-width category card */
+        .toggle-card-full { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 16px; text-align: left; }
+        .toggle-card-full .toggle-text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .toggle-card-full .toggle-name { font-size: 12px; text-align: left; }
+        .toggle-desc { font-size: 10.5px; color: var(--text-hint); font-weight: 400; margin-top: 1px; }
+        .toggle-card-full.selected .toggle-desc { color: rgba(232,57,42,0.6); }
 
         /* PLAN CARDS (IB Move) */
         .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -160,6 +165,7 @@
         .success-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--success); opacity: 0; transform: translateY(6px); animation: fade-up 0.4s ease forwards 0.75s; margin-bottom: 10px; }
         .success-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1.1; opacity: 0; transform: translateY(8px); animation: fade-up 0.4s ease forwards 0.85s; margin-bottom: 10px; }
         .success-body { font-size: 13px; color: var(--text-sub); line-height: 1.6; max-width: 270px; font-weight: 300; opacity: 0; transform: translateY(8px); animation: fade-up 0.4s ease forwards 0.95s; }
+        .success-next { font-size: 11.5px; color: var(--text-hint); margin-top: 8px; line-height: 1.6; max-width: 260px; font-style: italic; opacity: 0; animation: fade-up 0.4s ease forwards 1.0s; }
         @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
         .success-divider { width: 40px; height: 1px; background: var(--border); margin: 22px auto 0; opacity: 0; animation: fade-up 0.4s ease forwards 1.05s; }
         .success-ref-chip { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 9px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; opacity: 0; transform: translateY(6px); animation: fade-up 0.4s ease forwards 1.1s; }
@@ -180,24 +186,32 @@
             </div>
             <div class="vip-pill">
                 <div class="vip-dot"></div>
-                <span class="vip-text">Support</span>
+                <span class="vip-text">VIP</span>
             </div>
         </div>
         <div class="header-title" id="header-title"></div>
         <div class="header-sub" id="header-sub"></div>
         <div class="ref-row">
             <div class="ref-dot"></div>
-            <span class="ref-label">Case Open</span>
+            <span class="ref-label">Session</span>
             <span class="ref-value"><span style="opacity:0.45;font-weight:400;letter-spacing:0.5px">REF&nbsp;</span><span id="ref-display">—</span></span>
         </div>
     </div>
 <div id="category-select-screen" style="display:none; padding: 20px 24px 24px;">
     <div class="section-label" style="margin-top:4px"><div class="section-label-line"></div><span class="section-label-text">Select Request Type</span><div class="section-label-line"></div></div>
     <div class="toggle-grid toggle-grid-2" style="gap:10px; margin-top:4px;">
-        <div class="toggle-card" onclick="selectCategory('ib_move')"><div class="toggle-icon">🔄</div><div class="toggle-name">IB Move</div></div>
-        <div class="toggle-card" onclick="selectCategory('deposit')"><div class="toggle-icon">💰</div><div class="toggle-name">Deposit Issue</div></div>
-        <div class="toggle-card" onclick="selectCategory('withdrawal')"><div class="toggle-icon">💸</div><div class="toggle-name">Withdrawal Issue</div></div>
-        <div class="toggle-card" onclick="selectCategory('trading')"><div class="toggle-icon">📈</div><div class="toggle-name">Trading Issue</div></div>
+        <div class="toggle-card" onclick="selectCategory('ib_move')"><div class="toggle-check">✓</div><div class="toggle-icon">🔄</div><div class="toggle-name">IB Move</div></div>
+        <div class="toggle-card" onclick="selectCategory('deposit')"><div class="toggle-check">✓</div><div class="toggle-icon">💰</div><div class="toggle-name">Deposit Issue</div></div>
+        <div class="toggle-card" onclick="selectCategory('withdrawal')"><div class="toggle-check">✓</div><div class="toggle-icon">💸</div><div class="toggle-name">Withdrawal Issue</div></div>
+        <div class="toggle-card" onclick="selectCategory('trading')"><div class="toggle-check">✓</div><div class="toggle-icon">📈</div><div class="toggle-name">Trading Issue</div></div>
+        <div class="toggle-card toggle-card-full" onclick="selectCategory('ib_conversion')">
+            <div class="toggle-check">✓</div>
+            <div class="toggle-icon" style="margin-bottom:0;font-size:18px;">🔑</div>
+            <div class="toggle-text">
+                <div class="toggle-name">IB Conversion</div>
+                <div class="toggle-desc">Upgrade a client account to IB partner status</div>
+            </div>
+        </div>
     </div>
 </div>
     <div class="form-body" id="form-state">
@@ -206,8 +220,8 @@
         <button id="submit-btn" disabled onclick="sendData()">
             <div class="btn-inner">
                 <div class="spinner" id="spinner"></div>
-                <span id="btn-label">Submit Issue Report</span>
-                <span class="btn-arrow" id="btn-arrow" style="display:none">↗</span>
+                <span id="btn-label">Submit</span>
+                <span class="btn-arrow" id="btn-arrow" style="display:none">→</span>
             </div>
         </button>
         <div class="disclaimer">Our support team will review and respond to your case.</div>
@@ -223,7 +237,8 @@
         </div>
         <div class="success-label">Case Logged</div>
         <div class="success-title" id="success-title">Issue Reported</div>
-        <div class="success-body">Your support case has been received. Our team will be in touch shortly.</div>
+        <div class="success-body" id="success-body">Your support case has been received. Our team will be in touch shortly.</div>
+        <div class="success-next" id="success-next"></div>
         <div class="success-divider"></div>
         <div class="success-ref-chip">
             <span class="success-ref-label">Case Ref</span>
@@ -247,30 +262,61 @@ document.getElementById('success-ref-val').textContent = ref;
 
 function selectCategory(cat) {
     category = cat;
+    selectedPlan = '';
+    selectedMethod = '';
+    selectedDestination = '';
     const cfg = CONFIGS[category];
     document.getElementById('header-title').innerHTML = cfg.title;
     document.getElementById('header-sub').textContent = cfg.sub;
     document.getElementById('success-title').innerHTML = cfg.success;
+    document.getElementById('success-body').textContent = cfg.successBody;
+    document.getElementById('success-next').textContent = cfg.successNext;
+    document.getElementById('btn-label').textContent = cfg.btnLabel;
+    document.getElementById('btn-arrow').style.display = 'none';
+    document.getElementById('submit-btn').disabled = true;
     document.getElementById('category-select-screen').style.display = 'none';
     document.getElementById('form-state').style.display = 'block';
+    // Telegram BackButton
+    if (tg?.BackButton) {
+        tg.BackButton.show();
+        tg.BackButton.onClick(goBack);
+    }
     (renders[category] || renderIbMove)();
+}
+
+function goBack() {
+    category = '';
+    selectedPlan = '';
+    selectedMethod = '';
+    selectedDestination = '';
+    document.getElementById('form-state').style.display = 'none';
+    document.getElementById('category-select-screen').style.display = 'block';
+    document.getElementById('header-title').innerHTML = 'VIP <em>Support</em><br>Portal';
+    document.getElementById('header-sub').textContent = 'Select the type of request you need assistance with.';
+    if (tg?.BackButton) {
+        tg.BackButton.hide();
+        tg.BackButton.offClick(goBack);
+    }
+    tg?.disableClosingConfirmation?.();
 }
 
 document.getElementById('ref-display').textContent = ref;
 document.getElementById('success-ref-val').textContent = ref;
 
 const WEBHOOKS = {
-    ib_move:    'https://stoicfx.app.n8n.cloud/webhook/82d3a4a1-1978-4820-a27f-4378ba21f6f0',
-    deposit:    'https://stoicfx.app.n8n.cloud/webhook/stoicfx-deposit',
-    withdrawal: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-withdrawal',
-    trading:    'https://stoicfx.app.n8n.cloud/webhook/stoicfx-trading'
+    ib_move:       'https://stoicfx.app.n8n.cloud/webhook/82d3a4a1-1978-4820-a27f-4378ba21f6f0',
+    deposit:       'https://stoicfx.app.n8n.cloud/webhook/stoicfx-deposit',
+    withdrawal:    'https://stoicfx.app.n8n.cloud/webhook/stoicfx-withdrawal',
+    trading:       'https://stoicfx.app.n8n.cloud/webhook/stoicfx-trading',
+    ib_conversion: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-ib-conversion'
 };
 
 const CONFIGS = {
-    ib_move:    { title: 'IB <em>Move</em><br>Request',             sub: 'Transfer a client to your partner network under a selected commission structure.',      success: 'IB Move<br>Submitted' },
-    deposit:    { title: 'Deposit <em>Issue</em><br>Report',        sub: 'Having trouble with a deposit? Help us diagnose the problem by completing the form below.', success: 'Deposit Issue<br>Reported' },
-    withdrawal: { title: 'Withdrawal <em>Issue</em><br>Report',     sub: 'Having trouble with a withdrawal? Help us diagnose the problem by completing the form below.', success: 'Withdrawal Issue<br>Reported' },
-    trading:    { title: 'Trading <em>Issue</em><br>Report',        sub: 'Experiencing a trading problem? Share the details below and our team will investigate.', success: 'Trading Issue<br>Reported' }
+    ib_move:       { title: 'IB <em>Move</em><br>Request',          sub: 'Transfer a client to your partner network under a selected commission structure.',              success: 'IB Move<br>Submitted',          successBody: 'Your IB move request has been received and is pending review.',                        successNext: 'Our team will process this and confirm once complete.',              btnLabel: 'Submit IB Move Request' },
+    deposit:       { title: 'Deposit <em>Issue</em><br>Report',      sub: 'Having trouble with a deposit? Help us diagnose the problem by completing the form below.',   success: 'Deposit Issue<br>Reported',      successBody: 'Your deposit issue has been logged and assigned to our team.',                         successNext: 'We\'ll investigate and follow up with you shortly.',                 btnLabel: 'Report Deposit Issue' },
+    withdrawal:    { title: 'Withdrawal <em>Issue</em><br>Report',   sub: 'Having trouble with a withdrawal? Help us diagnose the problem by completing the form below.', success: 'Withdrawal Issue<br>Reported',   successBody: 'Your withdrawal issue has been logged and assigned to our team.',                      successNext: 'We\'ll investigate and follow up with you shortly.',                 btnLabel: 'Report Withdrawal Issue' },
+    trading:       { title: 'Trading <em>Issue</em><br>Report',      sub: 'Experiencing a trading problem? Share the details below and our team will investigate.',       success: 'Trading Issue<br>Reported',      successBody: 'Your trading issue has been logged. Our team will investigate and respond.',            successNext: 'Keep any relevant screenshots or position IDs handy.',              btnLabel: 'Report Trading Issue' },
+    ib_conversion: { title: 'IB <em>Conversion</em><br>Request',     sub: 'Request to upgrade a client account to full IB partner status.',                              success: 'Conversion<br>Requested',        successBody: 'Your IB conversion request has been received and will be processed by our team.',     successNext: 'The client will be notified once their account has been upgraded.',  btnLabel: 'Submit Conversion Request' }
 };
 
 document.getElementById('header-title').innerHTML = 'VIP <em>Support</em><br>Portal';
@@ -359,7 +405,7 @@ let selectedIssueLocation = '';
 function renderIbMove() {
     document.getElementById('form-fields').innerHTML = `
     <div class="field">
-        <div class="field-label-row"><label for="ib_email">IB Partner Email</label><span class="field-tag">Receiving partner</span></div>
+        <div class="field-label-row"><label for="ib_email">IB Partner Email</label><span class="field-tag">Destination IB</span></div>
         <div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="ib_email" placeholder="partner@domain.com" autocapitalize="none" inputmode="email"></div>
         <div class="field-error" id="ib_err">Enter a valid email address.</div>
     </div>
@@ -378,7 +424,7 @@ function renderIbMove() {
     <div class="reveal-wrap" id="other-plan-wrap"><div class="reveal-inner"><input type="text" id="other_plan_input" class="no-icon" placeholder="Describe the plan or structure…" maxlength="80" autocomplete="off"></div></div>
     <div class="plan-err" id="plan_err">Please select a commission plan.</div>`;
 
-    document.getElementById('ib_email').addEventListener('input', () => { validateEmail('ib_email','ib_err'); checkReady(); });
+    document.getElementById('ib_email').addEventListener('input', () => { validateEmail('ib_email','ib_err'); tg?.enableClosingConfirmation?.(); checkReady(); });
     document.getElementById('client_email').addEventListener('input', () => { validateEmail('client_email','client_err'); checkReady(); });
     document.getElementById('other_plan_input').addEventListener('input', checkReady);
 }
@@ -398,7 +444,7 @@ function selectPlan(el) {
 function renderDeposit() {
     document.getElementById('form-fields').innerHTML = `
     <div class="field">
-        <div class="field-label-row"><label for="client_email">Client Email</label><span class="field-tag">Account holder</span></div>
+        <div class="field-label-row"><label for="client_email">Client Email</label><span class="field-tag">Registered account email</span></div>
         <div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="client_email" placeholder="client@domain.com" autocapitalize="none" inputmode="email"></div>
         <div class="field-error" id="client_err">Enter a valid email address.</div>
     </div>
@@ -449,7 +495,7 @@ function renderDeposit() {
         <div class="field-error" id="desc_err">Please describe the issue.</div>
     </div>`;
 
-    document.getElementById('client_email').addEventListener('input', () => { validateEmail('client_email','client_err'); checkReady(); });
+    document.getElementById('client_email').addEventListener('input', () => { validateEmail('client_email','client_err'); tg?.enableClosingConfirmation?.(); checkReady(); });
     document.getElementById('amount').addEventListener('input', () => { validateAmount('amount','amount_err'); checkReady(); });
     document.getElementById('account_number')?.addEventListener('input', () => { validateNumeric('account_number','account_err','Account numbers contain digits only.'); checkReady(); });
     document.getElementById('tx_hash')?.addEventListener('input', () => { validateTxHash('tx_hash','tx_err'); checkReady(); });
@@ -460,7 +506,7 @@ function renderDeposit() {
 function renderWithdrawal() {
     document.getElementById('form-fields').innerHTML = `
     <div class="field">
-        <div class="field-label-row"><label for="client_email">Client Email</label><span class="field-tag">Account holder</span></div>
+        <div class="field-label-row"><label for="client_email">Client Email</label><span class="field-tag">Registered account email</span></div>
         <div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="client_email" placeholder="client@domain.com" autocapitalize="none" inputmode="email"></div>
         <div class="field-error" id="client_err">Enter a valid email address.</div>
     </div>
@@ -509,7 +555,7 @@ function renderWithdrawal() {
         <div class="field-error" id="desc_err">Please describe the issue.</div>
     </div>`;
 
-    document.getElementById('client_email').addEventListener('input', () => { validateEmail('client_email','client_err'); checkReady(); });
+    document.getElementById('client_email').addEventListener('input', () => { validateEmail('client_email','client_err'); tg?.enableClosingConfirmation?.(); checkReady(); });
     document.getElementById('amount').addEventListener('input', () => { validateAmount('amount','amount_err'); checkReady(); });
     document.getElementById('account_number')?.addEventListener('input', () => { validateNumeric('account_number','account_err','Account numbers contain digits only.'); checkReady(); });
     document.getElementById('tx_hash')?.addEventListener('input', () => { validateTxHash('tx_hash','tx_err'); checkReady(); });
@@ -551,7 +597,7 @@ function renderTrading() {
         <div class="field-error" id="desc_err">Please describe the issue.</div>
     </div>`;
 
-    document.getElementById('account_number').addEventListener('input', () => { validateNumeric('account_number','account_err','Account numbers contain digits only.'); checkReady(); });
+    document.getElementById('account_number').addEventListener('input', () => { validateNumeric('account_number','account_err','Account numbers contain digits only.'); tg?.enableClosingConfirmation?.(); checkReady(); });
     document.getElementById('position_id').addEventListener('input', () => {
         const el = document.getElementById('position_id');
         const v = el.value.trim();
@@ -561,6 +607,25 @@ function renderTrading() {
     });
     document.getElementById('issue_type').addEventListener('change', checkReady);
     document.getElementById('issue_desc').addEventListener('input', () => { validateNotEmpty('issue_desc','desc_err'); checkReady(); });
+}
+
+// ── IB Conversion ──
+function renderIbConversion() {
+    document.getElementById('form-fields').innerHTML = `
+    <div class="field">
+        <div class="field-label-row"><label for="client_email">Client Email</label><span class="field-tag">Account to convert</span></div>
+        <div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="client_email" placeholder="client@domain.com" autocapitalize="none" inputmode="email" autocomplete="off"></div>
+        <div class="field-error" id="client_err">Enter a valid email address.</div>
+    </div>
+    <div style="background:rgba(232,57,42,0.06);border:1px solid rgba(232,57,42,0.14);border-radius:9px;padding:11px 14px;margin-top:4px;">
+        <p style="font-size:11.5px;color:var(--text-sub);line-height:1.65;font-weight:300;">This will flag the client account for upgrade to IB partner status. Ensure the email matches exactly what's registered on the platform.</p>
+    </div>`;
+
+    document.getElementById('client_email').addEventListener('input', () => {
+        validateEmail('client_email','client_err');
+        tg?.enableClosingConfirmation?.();
+        checkReady();
+    });
 }
 
 // ── Shared selection handlers ──
@@ -620,6 +685,8 @@ function checkReady() {
         const typeOk = !!(document.getElementById('issue_type')?.value);
         const descOk = validateNotEmpty('issue_desc','desc_err');
         ok = accOk && posOk && typeOk && descOk;
+    } else if (category === 'ib_conversion') {
+        ok = validateEmail('client_email','client_err');
     }
     document.getElementById('submit-btn').disabled = !ok;
     document.getElementById('btn-arrow').style.display = ok ? '' : 'none';
@@ -642,6 +709,9 @@ function buildPayload() {
     if (category === 'trading') {
         return { ...base, account_number: document.getElementById('account_number').value.trim(), position_id: document.getElementById('position_id').value.trim() || null, issue_type: document.getElementById('issue_type').value, issue_description: document.getElementById('issue_desc').value.trim() };
     }
+    if (category === 'ib_conversion') {
+        return { ...base, client_email: document.getElementById('client_email').value.trim().toLowerCase() };
+    }
     return base;
 }
 
@@ -653,15 +723,22 @@ async function sendData() {
     document.getElementById('btn-arrow').style.display = 'none';
     btn.disabled = true;
     try {
-        await fetch(WEBHOOKS[category], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildPayload()) });
+        const response = await fetch(WEBHOOKS[category], {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildPayload())
+        });
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         tg?.HapticFeedback?.notificationOccurred?.('success');
+        tg?.BackButton?.hide();
+        tg?.disableClosingConfirmation?.();
         document.getElementById('form-state').style.display = 'none';
         document.getElementById('success-state').style.display = 'flex';
         setTimeout(() => tg?.close(), 3500);
     } catch(e) {
         tg?.HapticFeedback?.notificationOccurred?.('error');
         document.getElementById('spinner').style.display = 'none';
-        document.getElementById('btn-label').textContent = 'Submit Issue Report';
+        document.getElementById('btn-label').textContent = CONFIGS[category]?.btnLabel || 'Submit';
         document.getElementById('btn-arrow').style.display = '';
         btn.disabled = false;
         (tg?.showAlert ?? alert)('Submission failed. Please try again or contact our team directly.');
@@ -669,7 +746,7 @@ async function sendData() {
 }
 
 // ── Init ──
-const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: renderWithdrawal, trading: renderTrading };
+const renders = { ib_move: renderIbMove, deposit: renderDeposit, withdrawal: renderWithdrawal, trading: renderTrading, ib_conversion: renderIbConversion };
 
 // ── Delete button message on load ──
 async function deleteButtonMessage() {
@@ -700,7 +777,3 @@ deleteButtonMessage();
 </script>
 </body>
 </html>
-
-
-
-
