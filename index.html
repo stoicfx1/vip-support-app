@@ -668,30 +668,346 @@
 
 
     .choice-card.secondary {
-      color: #aeb4c2;
-      border-color: rgba(255, 255, 255, 0.055);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.016) 0%, rgba(255, 255, 255, 0.008) 100%);
+      color: #c4cad7;
+      border-color: rgba(255, 255, 255, 0.065);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.01) 100%);
     }
 
     .choice-card.secondary .icon {
-      opacity: 0.68;
+      opacity: 0.76;
     }
 
     .choice-card.secondary .choice-desc {
-      color: #5c6476;
+      color: #667085;
     }
 
     .choice-card.secondary:hover:not(.selected) {
-      border-color: rgba(255, 255, 255, 0.085);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.012) 100%);
+      border-color: rgba(255, 255, 255, 0.095);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.024) 0%, rgba(255, 255, 255, 0.014) 100%);
     }
 
     .choice-card.secondary.selected {
       color: var(--text-primary);
       border-color: var(--red);
-      background: linear-gradient(135deg, rgba(232, 57, 42, 0.08) 0%, rgba(232, 57, 42, 0.035) 100%);
+      background: linear-gradient(135deg, rgba(232, 57, 42, 0.09) 0%, rgba(232, 57, 42, 0.038) 100%);
       box-shadow: var(--shadow-active);
     }
+
+    .choice-card.tertiary {
+      color: #98a0b3;
+      border-color: rgba(255, 255, 255, 0.05);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.012) 0%, rgba(255, 255, 255, 0.006) 100%);
+    }
+
+    .choice-card.tertiary .icon {
+      opacity: 0.62;
+    }
+
+    .choice-card.tertiary .choice-desc {
+      color: #5b6477;
+    }
+
+    .choice-card.tertiary:hover:not(.selected) {
+      border-color: rgba(255, 255, 255, 0.078);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.01) 100%);
+    }
+
+    .choice-card.tertiary.selected {
+      color: var(--text-primary);
+      border-color: rgba(232, 57, 42, 0.7);
+      background: linear-gradient(135deg, rgba(232, 57, 42, 0.075) 0%, rgba(232, 57, 42, 0.03) 100%);
+      box-shadow: var(--shadow-active);
+    }
+
+    /* ── Category list redesign ───────────────────────── */
+
+    .category-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .category-group-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 2px;
+      margin-bottom: 10px;
+    }
+
+    .category-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .category-group-label span {
+      font-size: 9px;
+      color: #3d4354;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .category-group + .category-group {
+      margin-top: 20px;
+    }
+
+    /* ── Row card: the new primary UI element ── */
+
+    .cat-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+      transition: none;
+    }
+
+    .cat-row-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 14px;
+      padding: 13px 14px 13px 16px;
+      background: var(--surface-1);
+      border: 1px solid var(--border-1);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      transition:
+        border-color var(--t-fast) ease,
+        background var(--t-fast) ease,
+        box-shadow var(--t-med) ease,
+        transform 0.12s ease;
+    }
+
+    /* left accent stripe */
+    .cat-row-inner::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 2.5px;
+      border-radius: 0 2px 2px 0;
+      background: var(--cat-accent, rgba(255,255,255,0.08));
+      transition: background var(--t-fast) ease, opacity var(--t-fast) ease;
+      opacity: 0.6;
+    }
+
+    /* subtle radial behind icon */
+    .cat-row-inner::after {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--cat-glow, rgba(255,255,255,0.015)) 0%, transparent 70%);
+      pointer-events: none;
+      transition: opacity var(--t-med) ease;
+      opacity: 0;
+    }
+
+    .cat-row:hover:not(.selected) .cat-row-inner {
+      border-color: var(--border-2);
+      background: var(--surface-2);
+    }
+
+    .cat-row:hover:not(.selected) .cat-row-inner::after {
+      opacity: 1;
+    }
+
+    .cat-row:active .cat-row-inner {
+      transform: scale(0.985);
+    }
+
+    .cat-row.selected .cat-row-inner {
+      border-color: rgba(232, 57, 42, 0.38);
+      background: linear-gradient(135deg, rgba(232, 57, 42, 0.09) 0%, rgba(232, 57, 42, 0.03) 100%);
+      box-shadow: var(--shadow-active);
+    }
+
+    .cat-row.selected .cat-row-inner::before {
+      background: var(--red);
+      opacity: 1;
+    }
+
+    .cat-row.selected .cat-row-inner::after {
+      background: radial-gradient(circle, rgba(232,57,42,0.15) 0%, transparent 70%);
+      opacity: 1;
+    }
+
+    /* ── Icon shell ── */
+
+    .cat-icon-shell {
+      position: relative;
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--cat-icon-bg, rgba(255,255,255,0.04));
+      border: 1px solid var(--cat-icon-border, rgba(255,255,255,0.07));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--t-fast) ease, border-color var(--t-fast) ease;
+    }
+
+    .cat-icon-shell .icon {
+      width: 17px;
+      height: 17px;
+      color: var(--cat-icon-color, var(--text-secondary));
+      opacity: 0.82;
+      transition: color var(--t-fast) ease, opacity var(--t-fast) ease;
+    }
+
+    .cat-row.selected .cat-icon-shell {
+      background: rgba(232, 57, 42, 0.12);
+      border-color: rgba(232, 57, 42, 0.22);
+    }
+
+    .cat-row.selected .cat-icon-shell .icon {
+      color: var(--red);
+      opacity: 1;
+    }
+
+    /* ── Text copy ── */
+
+    .cat-copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cat-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.25;
+      letter-spacing: -0.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color var(--t-fast) ease;
+    }
+
+    .cat-desc {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 400;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color var(--t-fast) ease;
+    }
+
+    .cat-row.selected .cat-desc {
+      color: rgba(232, 57, 42, 0.5);
+    }
+
+    /* ── Arrow chevron ── */
+
+    .cat-arrow {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      color: var(--text-quaternary);
+      opacity: 0.6;
+      transition: opacity var(--t-fast) ease, transform var(--t-fast) ease, color var(--t-fast) ease;
+    }
+
+    .cat-arrow svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .cat-row:hover:not(.selected) .cat-arrow {
+      opacity: 0.9;
+      transform: translateX(2px);
+    }
+
+    .cat-row.selected .cat-arrow {
+      color: var(--red);
+      opacity: 0.8;
+    }
+
+    /* ── Selected check (replaces arrow when selected) ── */
+
+    .cat-check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.3) rotate(-10deg);
+      transition: transform 0.28s var(--ease-spring), opacity 0.22s ease;
+    }
+
+    .cat-check svg {
+      width: 9px;
+      height: 9px;
+      stroke: #fff;
+      stroke-width: 2.5;
+      fill: none;
+      display: block;
+    }
+
+    .cat-row.selected .cat-check {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+
+    .cat-row.selected .cat-arrow {
+      display: none;
+    }
+
+    /* divider between consecutive rows in same group */
+    .cat-row + .cat-row {
+      margin-top: 7px;
+    }
+
+    /* ── Staggered entrance animations ── */
+    .cat-row {
+      animation: row-enter 0.5s var(--ease-out) both;
+    }
+    .cat-row:nth-child(1) { animation-delay: 0.04s; }
+    .cat-row:nth-child(2) { animation-delay: 0.09s; }
+    .cat-row:nth-child(3) { animation-delay: 0.14s; }
+    .cat-row:nth-child(4) { animation-delay: 0.19s; }
+    .cat-row:nth-child(5) { animation-delay: 0.24s; }
+    .cat-row:nth-child(6) { animation-delay: 0.29s; }
+
+    @keyframes row-enter {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Legacy .choice-card kept for form selection cards (not category) ── */
 
     .choice-card.full {
       grid-column: 1 / -1;
@@ -1283,6 +1599,10 @@
     }
 
     @media (max-width: 380px) {
+      .category-primary-grid {
+        grid-template-columns: 1fr;
+      }
+
       body {
         padding-inline: 10px;
       }
@@ -1364,43 +1684,7 @@
         <div class="divider-label-line"></div>
       </div>
 
-      <div class="choice-grid cols-2" id="category-grid">
-        <button class="choice-card" type="button" data-action="select-category" data-category="ib_move">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="repeat"></span>
-          <span class="choice-name">IB Move</span>
-        </button>
-
-        <button class="choice-card" type="button" data-action="select-category" data-category="deposit">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="coins"></span>
-          <span class="choice-name">Deposit Issue</span>
-        </button>
-
-        <button class="choice-card" type="button" data-action="select-category" data-category="withdrawal">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="arrowUpRightCircle"></span>
-          <span class="choice-name">Withdrawal Issue</span>
-        </button>
-
-        <button class="choice-card" type="button" data-action="select-category" data-category="trading">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="trendUp"></span>
-          <span class="choice-name">Trading Issue</span>
-        </button>
-
-        <button class="choice-card" type="button" data-action="select-category" data-category="ib_conversion">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="keyRound"></span>
-          <span class="choice-name">IB Conversion</span>
-        </button>
-
-        <button class="choice-card secondary" type="button" data-action="select-category" data-category="general_inquiry">
-          <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="briefcase"></span>
-          <span class="choice-name">General Inquiry</span>
-        </button>
-      </div>
+      <div id="category-grid"></div>
     </section>
 
     <form class="form-body" id="form-state" hidden novalidate>
@@ -1510,8 +1794,8 @@
         { category: 'deposit', icon: 'coins', title: 'Deposit Issue' },
         { category: 'withdrawal', icon: 'arrowUpRightCircle', title: 'Withdrawal Issue' },
         { category: 'trading', icon: 'trendUp', title: 'Trading Issue' },
-        { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion' },
-        { category: 'general_inquiry', icon: 'briefcase', title: 'General Inquiry', tone: 'secondary' }
+        { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion', desc: 'Upgrade a client account to IB partner status' },
+        { category: 'general_inquiry', icon: 'briefcase', title: 'General Inquiry', desc: 'Non-standard or one-off requests', tone: 'tertiary' }
       ];
 
       const CONFIGS = {
@@ -1652,10 +1936,11 @@
         maxlength = textarea ? '2000' : '200'
       }) => `
         <div class="field">
+          ${label || hint ? `
           <div class="field-label-row">
-            <label for="${id}">${label}</label>
+            ${label ? `<label for="${id}">${label}</label>` : `<span></span>`}
             ${hint ? `<span class="field-hint">${hint}</span>` : ''}
-          </div>
+          </div>` : ''}
           <div class="input-wrap">
             ${iconName ? inputIcon(iconName, textarea) : ''}
             ${
@@ -1703,16 +1988,70 @@
         </button>
       `;
 
-      const buildCategoryMarkup = () => `
-        ${CATEGORY_OPTIONS.map((item) => selectionCard({
-          action: 'select-category',
-          valueKey: 'category',
-          value: item.category,
-          iconName: item.icon,
-          title: item.title,
-          tone: item.tone || ''
-        })).join('')}
-      `;
+      const CAT_META = {
+        ib_move:         { accent: 'rgba(99,179,237,0.55)',  glow: 'rgba(99,179,237,0.12)',  iconBg: 'rgba(99,179,237,0.07)',  iconBorder: 'rgba(99,179,237,0.14)',  iconColor: '#63b3ed', desc: 'Transfer a client to an IB partner network' },
+        deposit:         { accent: 'rgba(72,213,151,0.55)',  glow: 'rgba(72,213,151,0.12)',  iconBg: 'rgba(72,213,151,0.07)',  iconBorder: 'rgba(72,213,151,0.14)',  iconColor: '#48d597', desc: 'Report a deposit that didn\'t land' },
+        withdrawal:      { accent: 'rgba(246,173,85,0.55)',  glow: 'rgba(246,173,85,0.12)',  iconBg: 'rgba(246,173,85,0.07)',  iconBorder: 'rgba(246,173,85,0.14)',  iconColor: '#f6ad55', desc: 'Report a withdrawal problem or delay' },
+        trading:         { accent: 'rgba(183,148,244,0.55)', glow: 'rgba(183,148,244,0.12)', iconBg: 'rgba(183,148,244,0.07)', iconBorder: 'rgba(183,148,244,0.14)', iconColor: '#b794f4', desc: 'Execution, slippage or platform issues' },
+        ib_conversion:   { accent: 'rgba(232,57,42,0.55)',   glow: 'rgba(232,57,42,0.12)',   iconBg: 'rgba(232,57,42,0.07)',   iconBorder: 'rgba(232,57,42,0.14)',   iconColor: '#e8392a', desc: 'Upgrade a client account to IB status' },
+        general_inquiry: { accent: 'rgba(113,128,150,0.28)', glow: 'rgba(113,128,150,0.05)', iconBg: 'rgba(255,255,255,0.025)', iconBorder: 'rgba(255,255,255,0.05)', iconColor: '#7d8797', desc: 'Non-standard or one-off requests' }
+      };
+
+      const chevronRight = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      const checkSmall   = `<svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+      const categoryRow = (item) => {
+        const m = CAT_META[item.category] || {};
+        const desc = item.desc || m.desc || '';
+        return `
+          <button
+            class="cat-row"
+            type="button"
+            data-action="select-category"
+            data-category="${item.category}"
+            style="
+              --cat-accent: ${m.accent};
+              --cat-glow: ${m.glow};
+              --cat-icon-bg: ${m.iconBg};
+              --cat-icon-border: ${m.iconBorder};
+              --cat-icon-color: ${m.iconColor};
+            "
+          >
+            <div class="cat-row-inner">
+              <div class="cat-icon-shell">
+                ${iconSlot(item.icon)}
+              </div>
+              <div class="cat-copy">
+                <span class="cat-name">${item.title}</span>
+                ${desc ? `<span class="cat-desc">${desc}</span>` : ''}
+              </div>
+              <span class="cat-arrow">${chevronRight}</span>
+              <span class="cat-check">${checkSmall}</span>
+            </div>
+          </button>
+        `;
+      };
+
+      const buildCategoryMarkup = () => {
+        const primaryKeys = ['ib_move', 'deposit', 'withdrawal', 'trading'];
+        const primary = CATEGORY_OPTIONS.filter((item) => primaryKeys.includes(item.category));
+        const ibConversion = CATEGORY_OPTIONS.find((item) => item.category === 'ib_conversion');
+        const generalInquiry = CATEGORY_OPTIONS.find((item) => item.category === 'general_inquiry');
+
+        return `
+          <div class="category-layout">
+            <div class="category-group">
+              <div class="category-group-label"><span>Select a category</span></div>
+              ${primary.map(categoryRow).join('')}
+              ${categoryRow(ibConversion)}
+            </div>
+            <div class="category-group">
+              <div class="category-group-label"><span>Other Requests</span></div>
+              ${categoryRow(generalInquiry)}
+            </div>
+          </div>
+        `;
+      };
 
       const buildIbMoveMarkup = () => `
         ${
@@ -1952,6 +2291,8 @@
         ${
           textField({
             id: 'issue_desc',
+            label: 'Trading Issue Details',
+            hint: 'Required',
             placeholder: 'Describe the trading issue in detail. Include instrument, time of occurrence, and any error messages...',
             iconName: 'fileText',
             errorId: 'desc_err',
@@ -2033,6 +2374,8 @@
         ${
           textField({
             id: 'issue_desc',
+            label: 'Inquiry Details',
+            hint: 'Required',
             placeholder: 'Share the full details of the inquiry, the outcome you need, and anything our team should review.',
             iconName: 'fileText',
             errorId: 'desc_err',
