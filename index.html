@@ -73,6 +73,11 @@
       --shadow-active:
         0 0 0 1px rgba(232, 57, 42, 0.15),
         0 4px 16px rgba(232, 57, 42, 0.08);
+      --shadow-premium:
+        0 18px 50px rgba(0, 0, 0, 0.5),
+        0 6px 20px rgba(0, 0, 0, 0.26),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+      --telegram-safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     html {
@@ -89,7 +94,7 @@
       -moz-osx-font-smoothing: grayscale;
       display: flex;
       justify-content: center;
-      padding: var(--sp-4) var(--sp-3) 48px;
+      padding: 12px var(--sp-3) calc(34px + var(--telegram-safe-bottom));
       overflow-x: hidden;
       overscroll-behavior-y: contain;
       touch-action: manipulation;
@@ -128,7 +133,8 @@
       border: 1px solid var(--border-1);
       border-radius: var(--r-xl);
       overflow: hidden;
-      box-shadow: var(--shadow-card);
+      box-shadow: var(--shadow-premium);
+      backdrop-filter: blur(18px);
       animation: card-enter 0.6s var(--ease-out) both;
     }
 
@@ -226,18 +232,18 @@
       backdrop-filter: blur(8px);
     }
 
-    .vip-indicator,
-    .session-dot {
-      border-radius: 50%;
-      flex-shrink: 0;
-      animation: pulse-glow 2.4s ease-in-out infinite;
-    }
-
     .vip-indicator {
       width: 6px;
       height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
       background: var(--red);
       box-shadow: 0 0 6px rgba(232, 57, 42, 0.6);
+    }
+
+    .session-dot {
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     .session-dot {
@@ -245,19 +251,7 @@
       height: 7px;
       background: var(--success);
       box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
-      animation-name: pulse-glow-green;
-      animation-duration: 2.2s;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% {
-        opacity: 1;
-        box-shadow: 0 0 6px rgba(232, 57, 42, 0.6);
-      }
-      50% {
-        opacity: 0.4;
-        box-shadow: 0 0 2px rgba(232, 57, 42, 0.2);
-      }
+      animation: pulse-glow-green 2.2s ease-in-out infinite;
     }
 
     @keyframes pulse-glow-green {
@@ -670,6 +664,35 @@
       box-shadow: var(--shadow-active);
     }
 
+
+
+
+    .choice-card.secondary {
+      color: #aeb4c2;
+      border-color: rgba(255, 255, 255, 0.055);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.016) 0%, rgba(255, 255, 255, 0.008) 100%);
+    }
+
+    .choice-card.secondary .icon {
+      opacity: 0.68;
+    }
+
+    .choice-card.secondary .choice-desc {
+      color: #5c6476;
+    }
+
+    .choice-card.secondary:hover:not(.selected) {
+      border-color: rgba(255, 255, 255, 0.085);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.012) 100%);
+    }
+
+    .choice-card.secondary.selected {
+      color: var(--text-primary);
+      border-color: var(--red);
+      background: linear-gradient(135deg, rgba(232, 57, 42, 0.08) 0%, rgba(232, 57, 42, 0.035) 100%);
+      box-shadow: var(--shadow-active);
+    }
+
     .choice-card.full {
       grid-column: 1 / -1;
       flex-direction: row;
@@ -702,6 +725,11 @@
       flex-direction: column;
       gap: 2px;
       width: 100%;
+      text-align: center;
+    }
+
+    .choice-card.full .choice-copy {
+      text-align: left;
     }
 
     .choice-name {
@@ -1051,6 +1079,205 @@
       }
     }
 
+
+    .choice-card::before,
+    .choice-card::after,
+    #submit-btn::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      transition: opacity var(--t-med) ease, transform var(--t-med) ease;
+    }
+
+    .choice-card::before {
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.01) 40%, transparent 100%);
+      opacity: 0.55;
+    }
+
+    .choice-card::after {
+      inset: auto -18% -50% auto;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,57,42,0.14) 0%, transparent 72%);
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .choice-card:hover::after,
+    .choice-card.selected::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .choice-card:hover:not(.selected) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    .choice-card.selected {
+      transform: translateY(-1px);
+    }
+
+    .choice-card .choice-name {
+      transition: transform var(--t-fast) ease, letter-spacing var(--t-fast) ease;
+    }
+
+    .choice-card:hover .choice-name,
+    .choice-card.selected .choice-name {
+      transform: translateY(-0.5px);
+      letter-spacing: 0.08px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    input,
+    select,
+    textarea {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover {
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    #submit-btn.ready {
+      animation: ready-breathe 2.8s ease-in-out infinite;
+    }
+
+    #submit-btn::after {
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 28%, transparent 55%);
+      opacity: 0;
+      transform: translateX(-130%);
+    }
+
+    #submit-btn.ready::after {
+      opacity: 1;
+      animation: btn-sheen 2.6s ease-in-out infinite;
+    }
+
+    @keyframes ready-breathe {
+      0%, 100% { box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.15) inset, 0 4px 16px rgba(232,57,42,0.2), 0 1px 3px rgba(0,0,0,0.2); }
+      50% { box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.15) inset, 0 10px 28px rgba(232,57,42,0.28), 0 2px 6px rgba(0,0,0,0.22); }
+    }
+
+    @keyframes btn-sheen {
+      0% { transform: translateX(-130%); }
+      55%, 100% { transform: translateX(140%); }
+    }
+
+    .success-flow {
+      width: 100%;
+      max-width: 300px;
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .success-step {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      opacity: 0.45;
+      transform: translateY(6px);
+      transition: opacity .28s ease, transform .28s ease, border-color .28s ease, background .28s ease;
+    }
+
+    .success-step.is-live,
+    .success-step.is-done {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .success-step.is-live {
+      border-color: rgba(232,57,42,0.18);
+      background: rgba(232,57,42,0.06);
+    }
+
+    .success-step.is-done {
+      border-color: rgba(52,199,89,0.16);
+      background: rgba(52,199,89,0.06);
+    }
+
+    .success-step-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.26);
+    }
+
+    .success-step.is-live .success-step-dot {
+      border-color: rgba(232,57,42,0.3);
+      color: var(--red);
+      background: rgba(232,57,42,0.12);
+    }
+
+    .success-step.is-done .success-step-dot {
+      border-color: rgba(52,199,89,0.26);
+      color: var(--success);
+      background: rgba(52,199,89,0.12);
+    }
+
+    .success-step-dot svg {
+      width: 10px;
+      height: 10px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    .success-step-copy {
+      text-align: left;
+    }
+
+    .success-step-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .success-step-meta {
+      margin-top: 2px;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.18px;
+    }
+
+    .success-closing {
+      margin-top: 18px;
+    }
+
+    @media (max-width: 420px) {
+      .header { padding: 20px 20px 18px; }
+      .category-screen, .form-body { padding: 18px 20px 22px; }
+      .success-state { padding: 36px 20px 34px; }
+      .header-title { font-size: 30px; }
+      .header-sub { font-size: 12.5px; max-width: 300px; }
+      .session-bar { margin-top: 12px; }
+      .choice-card { min-height: 78px; }
+      .choice-card.full { padding: 13px 15px; }
+      .submit-divider { margin: 24px 0 20px; }
+    }
+
     [hidden] {
       display: none !important;
     }
@@ -1087,6 +1314,7 @@
       .choice-grid.cols-3 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1119,7 +1347,7 @@
 
       <div class="trust-strip" aria-label="Brand trust markers">
         <div class="trust-chip primary"><span class="icon" data-icon="circleCheck" aria-hidden="true"></span><span>FSCA Regulated</span></div>
-        <div class="trust-chip"><span class="icon" data-icon="sparkles" aria-hidden="true"></span><span>Priority Routing</span></div>
+        <div class="trust-chip"><span class="icon" data-icon="trendUp" aria-hidden="true"></span><span>Direct Execution</span></div>
       </div>
 
       <div class="session-bar">
@@ -1151,23 +1379,26 @@
 
         <button class="choice-card" type="button" data-action="select-category" data-category="withdrawal">
           <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="arrow-up-right-circle"></span>
+          <span class="icon" aria-hidden="true" data-icon="arrowUpRightCircle"></span>
           <span class="choice-name">Withdrawal Issue</span>
         </button>
 
         <button class="choice-card" type="button" data-action="select-category" data-category="trading">
           <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="trend-up"></span>
+          <span class="icon" aria-hidden="true" data-icon="trendUp"></span>
           <span class="choice-name">Trading Issue</span>
         </button>
 
-        <button class="choice-card full" type="button" data-action="select-category" data-category="ib_conversion">
+        <button class="choice-card" type="button" data-action="select-category" data-category="ib_conversion">
           <span class="check-icon" aria-hidden="true"></span>
-          <span class="icon" aria-hidden="true" data-icon="key-round"></span>
-          <span class="choice-copy">
-            <span class="choice-name">IB Conversion</span>
-            <span class="choice-desc">Upgrade a client account to IB partner status</span>
-          </span>
+          <span class="icon" aria-hidden="true" data-icon="keyRound"></span>
+          <span class="choice-name">IB Conversion</span>
+        </button>
+
+        <button class="choice-card secondary" type="button" data-action="select-category" data-category="general_inquiry">
+          <span class="check-icon" aria-hidden="true"></span>
+          <span class="icon" aria-hidden="true" data-icon="briefcase"></span>
+          <span class="choice-name">General Inquiry</span>
         </button>
       </div>
     </section>
@@ -1201,6 +1432,30 @@
       <div class="success-title" id="success-title">Issue Reported</div>
       <div class="success-body" id="success-body">Your priority support case has been received. Our team will be in touch shortly.</div>
       <div class="success-next" id="success-next"></div>
+
+      <div class="success-flow" id="success-flow" aria-label="Submission progress">
+        <div class="success-step" data-step="received">
+          <span class="success-step-dot" aria-hidden="true"></span>
+          <div class="success-step-copy">
+            <div class="success-step-title">Request received</div>
+            <div class="success-step-meta">Your VIP case entered the queue</div>
+          </div>
+        </div>
+        <div class="success-step" data-step="routed">
+          <span class="success-step-dot" aria-hidden="true"></span>
+          <div class="success-step-copy">
+            <div class="success-step-title">Priority routing applied</div>
+            <div class="success-step-meta">Your case is being directed to the correct team</div>
+          </div>
+        </div>
+        <div class="success-step" data-step="reference">
+          <span class="success-step-dot" aria-hidden="true"></span>
+          <div class="success-step-copy">
+            <div class="success-step-title">Reference generated</div>
+            <div class="success-step-meta">Use the case reference below for follow-up</div>
+          </div>
+        </div>
+      </div>
 
       <div class="success-rule"></div>
 
@@ -1245,6 +1500,8 @@
         fileText: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path><path d="M8 9h3"></path>'),
         listChecks: svg('<path d="m3 6 2 2 4-4"></path><path d="M10 6h11"></path><path d="m3 12 2 2 4-4"></path><path d="M10 12h11"></path><path d="m3 18 2 2 4-4"></path><path d="M10 18h11"></path>'),
         alertTriangle: svg('<path d="m12 3 9 16H3L12 3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>'),
+        lifeBuoy: svg('<circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3"></circle><path d="m5.64 5.64 4.24 4.24"></path><path d="m14.12 14.12 4.24 4.24"></path><path d="m18.36 5.64-4.24 4.24"></path><path d="m9.88 14.12-4.24 4.24"></path>'),
+        briefcase: svg('<rect x="3" y="7" width="18" height="12" rx="2"></rect><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"></path><path d="M3 11h18"></path>'),
         circleCheck: svg('<circle cx="12" cy="12" r="9"></circle><path d="m8.5 12 2.5 2.5 4.5-5"></path>')
       };
 
@@ -1253,7 +1510,8 @@
         { category: 'deposit', icon: 'coins', title: 'Deposit Issue' },
         { category: 'withdrawal', icon: 'arrowUpRightCircle', title: 'Withdrawal Issue' },
         { category: 'trading', icon: 'trendUp', title: 'Trading Issue' },
-        { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion', desc: 'Upgrade a client account to IB partner status', full: true }
+        { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion' },
+        { category: 'general_inquiry', icon: 'briefcase', title: 'General Inquiry', tone: 'secondary' }
       ];
 
       const CONFIGS = {
@@ -1296,6 +1554,14 @@
           successBody: 'Your IB conversion request has been received and will be processed by our team.',
           successNext: 'The client will be notified once their account has been upgraded.',
           btnLabel: 'Submit Conversion Request'
+        },
+        general_inquiry: {
+          title: 'General <em>Inquiry</em><br>Request',
+          sub: 'Use this route for non-standard or one-off partner requests that do not fit the categories above.',
+          success: 'General Inquiry<br>Submitted',
+          successBody: 'Your inquiry has been received and routed for review.',
+          successNext: 'We\'ll review the details and direct it to the right team.',
+          btnLabel: 'Submit General Inquiry'
         }
       };
 
@@ -1304,7 +1570,8 @@
         deposit: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-deposit',
         withdrawal: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-withdrawal',
         trading: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-trading',
-        ib_conversion: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-ib-conversion'
+        ib_conversion: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-ib-conversion',
+        general_inquiry: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-general-inquiry'
       };
 
       const tg = window.Telegram?.WebApp;
@@ -1340,6 +1607,7 @@
         successBody: document.getElementById('success-body'),
         successNext: document.getElementById('success-next'),
         successRef: document.getElementById('success-ref-val'),
+        successFlow: document.getElementById('success-flow'),
         categoryScreen: document.getElementById('category-screen'),
         formState: document.getElementById('form-state'),
         formFields: document.getElementById('form-fields'),
@@ -1380,7 +1648,8 @@
         autocomplete = 'off',
         autocapitalize = 'none',
         extraAttrs = '',
-        minHeight = ''
+        minHeight = '',
+        maxlength = textarea ? '2000' : '200'
       }) => `
         <div class="field">
           <div class="field-label-row">
@@ -1391,8 +1660,8 @@
             ${iconName ? inputIcon(iconName, textarea) : ''}
             ${
               textarea
-                ? `<textarea id="${id}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" ${minHeight ? `style="min-height:${minHeight}"` : ''} ${extraAttrs}></textarea>`
-                : `<input id="${id}" type="${type}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" ${inputmode ? `inputmode="${inputmode}"` : ''} ${extraAttrs}>`
+                ? `<textarea id="${id}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${minHeight ? `style="min-height:${minHeight}"` : ''} ${extraAttrs}></textarea>`
+                : `<input id="${id}" type="${type}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${inputmode ? `inputmode="${inputmode}"` : ''} ${extraAttrs}>`
             }
           </div>
           ${fieldError(errorId, errorText)}
@@ -1415,10 +1684,11 @@
         title,
         desc = '',
         full = false,
-        compact = false
+        compact = false,
+        tone = ''
       }) => `
         <button
-          class="choice-card${full ? ' full' : ''}${compact ? ' compact' : ''}"
+          class="choice-card${full ? ' full' : ''}${compact ? ' compact' : ''}${tone ? ` ${tone}` : ''}"
           type="button"
           data-action="${action}"
           data-${valueKey}="${value}"
@@ -1433,18 +1703,16 @@
         </button>
       `;
 
-      const buildCategoryMarkup = () =>
-        CATEGORY_OPTIONS.map((item) =>
-          selectionCard({
-            action: 'select-category',
-            valueKey: 'category',
-            value: item.category,
-            iconName: item.icon,
-            title: item.title,
-            desc: item.desc || '',
-            full: !!item.full
-          })
-        ).join('');
+      const buildCategoryMarkup = () => `
+        ${CATEGORY_OPTIONS.map((item) => selectionCard({
+          action: 'select-category',
+          valueKey: 'category',
+          value: item.category,
+          iconName: item.icon,
+          title: item.title,
+          tone: item.tone || ''
+        })).join('')}
+      `;
 
       const buildIbMoveMarkup = () => `
         ${
@@ -1715,12 +1983,73 @@
         </div>
       `;
 
+      const buildGeneralInquiryMarkup = () => `
+        ${
+          textField({
+            id: 'client_email',
+            label: 'Contact Email',
+            hint: 'Required',
+            placeholder: 'client@domain.com',
+            type: 'email',
+            inputmode: 'email',
+            iconName: 'mail',
+            errorId: 'client_err',
+            errorText: 'Enter a valid email address.',
+            autocomplete: 'email'
+          })
+        }
+
+        ${
+          textField({
+            id: 'request_topic',
+            label: 'Inquiry Topic',
+            hint: 'Short summary',
+            placeholder: 'What is the inquiry about?',
+            iconName: 'penSquare',
+            errorId: 'topic_err',
+            errorText: 'Enter a short topic so we can route this correctly.'
+          })
+        }
+
+        ${
+          textField({
+            id: 'related_reference',
+            label: 'Related Account / Client / Reference',
+            hint: 'Optional',
+            placeholder: 'Account number, client email, payout ref, etc.',
+            iconName: 'hash',
+            errorId: 'related_err',
+            errorText: '',
+            autocapitalize: 'off'
+          })
+        }
+
+        <div class="info-callout">
+          <p>Use this route for non-standard or one-off requests. Include enough context for accurate routing and faster handling.</p>
+        </div>
+
+        ${sectionLabel('Request Details')}
+
+        ${
+          textField({
+            id: 'issue_desc',
+            placeholder: 'Share the full details of the inquiry, the outcome you need, and anything our team should review.',
+            iconName: 'fileText',
+            errorId: 'desc_err',
+            errorText: 'Please provide enough detail for routing.',
+            textarea: true,
+            minHeight: '112px'
+          })
+        }
+      `;
+
       const renderers = {
         ib_move: buildIbMoveMarkup,
         deposit: () => buildFundsIssueMarkup('deposit'),
         withdrawal: () => buildFundsIssueMarkup('withdrawal'),
         trading: buildTradingMarkup,
-        ib_conversion: buildIbConversionMarkup
+        ib_conversion: buildIbConversionMarkup,
+        general_inquiry: buildGeneralInquiryMarkup
       };
 
       function initStaticIcons() {
@@ -1801,6 +2130,19 @@
         });
       }
 
+      function validateTextLength(id, errorId, min, message) {
+        const input = getById(id);
+        if (!input) return false;
+        const value = input.value.trim();
+        const valid = value.length >= min;
+        return setInputState(id, {
+          valid,
+          error: input.value.length > 0 && !valid,
+          errorId,
+          errorText: message
+        });
+      }
+
       function validateAmount(id, errorId) {
         const input = getById(id);
         if (!input) return false;
@@ -1868,6 +2210,7 @@
         el.formFields.innerHTML = renderer();
         el.submitBtn.disabled = true;
         el.btnArrow.hidden = true;
+        el.submitBtn.classList.remove('ready');
         el.spinner.style.display = 'none';
       }
 
@@ -1878,6 +2221,7 @@
         el.categoryScreen.hidden = false;
         el.formState.hidden = true;
         el.successState.style.display = 'none';
+        resetSuccessFlow();
         el.headerTitle.innerHTML = 'VIP <em>Support</em><br>Desk';
         el.headerSub.textContent = 'Priority assistance for StoicFX partners and high-value clients.';
         el.btnLabel.textContent = 'Submit';
@@ -2060,15 +2404,23 @@
           ready = validateEmail('client_email', 'client_err');
         }
 
+        if (state.category === 'general_inquiry') {
+          const emailValid = validateEmail('client_email', 'client_err');
+          const topicValid = validateTextLength('request_topic', 'topic_err', 4, 'Enter a short topic so we can route this correctly.');
+          const descriptionValid = validateTextLength('issue_desc', 'desc_err', 12, 'Please provide enough detail for routing.');
+          ready = emailValid && topicValid && descriptionValid;
+        }
+
         el.submitBtn.disabled = !ready || state.submitting;
         el.btnArrow.hidden = !ready;
+        el.submitBtn.classList.toggle('ready', ready && !state.submitting);
       }
 
       function buildPayload() {
         const base = {
           ref: state.ref,
           category: state.category,
-          telegram_user_id: Number(tg?.initDataUnsafe?.user?.id || 1775819196),
+          telegram_user_id: tg?.initDataUnsafe?.user?.id || null,
           telegram_init_data: tg?.initData || ''
         };
 
@@ -2121,7 +2473,44 @@
           };
         }
 
+        if (state.category === 'general_inquiry') {
+          return {
+            ...base,
+            client_email: getById('client_email').value.trim().toLowerCase(),
+            request_topic: getById('request_topic').value.trim(),
+            related_reference: getById('related_reference').value.trim() || null,
+            issue_description: getById('issue_desc').value.trim()
+          };
+        }
+
         return base;
+      }
+
+
+      function setStepState(stepName, mode) {
+        const step = el.successFlow?.querySelector(`[data-step="${stepName}"]`);
+        if (!step) return;
+        step.classList.remove('is-live', 'is-done');
+        if (mode) step.classList.add(mode);
+        const dot = step.querySelector('.success-step-dot');
+        if (!dot) return;
+        if (mode === 'is-done') dot.innerHTML = icon('check');
+        else if (mode === 'is-live') dot.innerHTML = icon('sparkles');
+        else dot.innerHTML = '';
+      }
+
+      function resetSuccessFlow() {
+        ['received', 'routed', 'reference'].forEach((name) => setStepState(name, ''));
+      }
+
+      function playSuccessFlow() {
+        resetSuccessFlow();
+        window.setTimeout(() => setStepState('received', 'is-live'), 80);
+        window.setTimeout(() => setStepState('received', 'is-done'), 420);
+        window.setTimeout(() => setStepState('routed', 'is-live'), 520);
+        window.setTimeout(() => setStepState('routed', 'is-done'), 980);
+        window.setTimeout(() => setStepState('reference', 'is-live'), 1080);
+        window.setTimeout(() => setStepState('reference', 'is-done'), 1450);
       }
 
       async function sendData() {
@@ -2153,8 +2542,9 @@
 
           el.formState.hidden = true;
           el.successState.style.display = 'flex';
+          playSuccessFlow();
 
-          window.setTimeout(() => tg?.close(), 3500);
+          if (tg) window.setTimeout(() => tg.close(), 4200);
         } catch (error) {
           console.error('Submission failed:', error);
           tg?.HapticFeedback?.notificationOccurred?.('error');
