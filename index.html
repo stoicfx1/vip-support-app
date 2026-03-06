@@ -2328,7 +2328,7 @@
         ${
           textField({
             id: 'client_email',
-            label: 'Contact Email',
+            label: 'Your Email',
             hint: 'Required',
             placeholder: 'client@domain.com',
             type: 'email',
@@ -2342,46 +2342,28 @@
 
         ${
           textField({
-            id: 'request_topic',
-            label: 'Inquiry Topic',
-            hint: 'Short summary',
-            placeholder: 'What is the inquiry about?',
-            iconName: 'penSquare',
-            errorId: 'topic_err',
-            errorText: 'Enter a short topic so we can route this correctly.'
-          })
-        }
-
-        ${
-          textField({
-            id: 'related_reference',
-            label: 'Related Account / Client / Reference',
-            hint: 'Optional',
-            placeholder: 'Account number, client email, payout ref, etc.',
-            iconName: 'hash',
-            errorId: 'related_err',
-            errorText: '',
-            autocapitalize: 'off'
-          })
-        }
-
-        <div class="info-callout">
-          <p>Use this route for non-standard or one-off requests. Include enough context for accurate routing and faster handling.</p>
-        </div>
-
-        ${sectionLabel('Request Details')}
-
-        ${
-          textField({
             id: 'issue_desc',
-            label: 'Inquiry Details',
+            label: 'What do you need resolved?',
             hint: 'Required',
-            placeholder: 'Share the full details of the inquiry, the outcome you need, and anything our team should review.',
+            placeholder: 'Give us a clear summary of your request and the outcome you\'re looking for...',
             iconName: 'fileText',
             errorId: 'desc_err',
-            errorText: 'Please provide enough detail for routing.',
+            errorText: 'Please describe your request.',
             textarea: true,
-            minHeight: '112px'
+            minHeight: '108px'
+          })
+        }
+
+        ${
+          textField({
+            id: 'additional_details',
+            label: 'Additional Details',
+            hint: 'Optional',
+            placeholder: 'Account number, client name, reference — anything that helps',
+            iconName: 'hash',
+            errorId: 'details_err',
+            errorText: '',
+            autocapitalize: 'off'
           })
         }
       `;
@@ -2749,9 +2731,8 @@
 
         if (state.category === 'general_inquiry') {
           const emailValid = validateEmail('client_email', 'client_err');
-          const topicValid = validateTextLength('request_topic', 'topic_err', 4, 'Enter a short topic so we can route this correctly.');
-          const descriptionValid = validateTextLength('issue_desc', 'desc_err', 12, 'Please provide enough detail for routing.');
-          ready = emailValid && topicValid && descriptionValid;
+          const descriptionValid = validateTextLength('issue_desc', 'desc_err', 10, 'Please describe your request.');
+          ready = emailValid && descriptionValid;
         }
 
         el.submitBtn.disabled = !ready || state.submitting;
@@ -2820,9 +2801,8 @@
           return {
             ...base,
             client_email: getById('client_email').value.trim().toLowerCase(),
-            request_topic: getById('request_topic').value.trim(),
-            related_reference: getById('related_reference').value.trim() || null,
-            issue_description: getById('issue_desc').value.trim()
+            issue_description: getById('issue_desc').value.trim(),
+            additional_details: getById('additional_details')?.value.trim() || null
           };
         }
 
