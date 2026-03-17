@@ -749,11 +749,11 @@
     }
 
     .category-group-label span {
-      font-size: 9px;
-      color: #3d4354;
-      letter-spacing: 1.8px;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      letter-spacing: 1.6px;
       text-transform: uppercase;
-      font-weight: 700;
+      font-weight: 600;
       white-space: nowrap;
     }
 
@@ -1645,6 +1645,165 @@
         scroll-behavior: auto !important;
       }
     }
+
+    /* ── IB accordion sub-wrap ─────────────────────────── */
+
+    .cat-sub-wrap {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        max-height 0.38s var(--ease-out),
+        opacity 0.28s ease;
+    }
+
+    .cat-sub-wrap.open {
+      max-height: 420px;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cat-sub-wrap-inner {
+      padding-top: 6px;
+      padding-left: 14px;
+      margin-left: 6px;
+      border-left: 1.5px solid rgba(255, 255, 255, 0.055);
+    }
+
+    .cat-sub-wrap .cat-row {
+      animation: none;
+    }
+
+    .cat-sub-wrap .cat-row + .cat-row {
+      margin-top: 6px;
+    }
+
+    .cat-row.ib-parent .cat-arrow {
+      transition:
+        opacity var(--t-fast) ease,
+        transform 0.25s var(--ease-out),
+        color var(--t-fast) ease;
+    }
+
+    .cat-row.ib-parent.expanded .cat-arrow {
+      transform: rotate(90deg);
+      opacity: 0.9;
+      color: var(--red);
+    }
+
+    .cat-row.ib-parent.expanded .cat-row-inner {
+      border-color: rgba(232, 57, 42, 0.22);
+      background: linear-gradient(135deg, rgba(232, 57, 42, 0.07) 0%, rgba(232, 57, 42, 0.025) 100%);
+    }
+
+    .cat-row.ib-parent.expanded .cat-row-inner::before {
+      background: var(--red);
+      opacity: 0.75;
+    }
+
+    .cat-row.ib-parent.expanded .cat-icon-shell .icon {
+      color: var(--red);
+      opacity: 1;
+    }
+
+    .cat-row.ib-parent.expanded .cat-icon-shell {
+      background: rgba(232, 57, 42, 0.10);
+      border-color: rgba(232, 57, 42, 0.20);
+    }
+
+    .cat-row.ib-parent.expanded .cat-name {
+      color: var(--text-primary);
+    }
+
+    /* ── Screen transitions ────────────────────────────── */
+
+    .category-screen,
+    .form-body {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .screen-fade-out {
+      opacity: 0 !important;
+      transform: translateY(-10px) !important;
+      pointer-events: none;
+    }
+
+    @keyframes screen-slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .screen-slide-in {
+      animation: screen-slide-up 0.32s var(--ease-out) both;
+    }
+
+    /* ── Header title fade ─────────────────────────────── */
+
+    .header-title,
+    .header-sub {
+      transition: opacity 0.18s ease;
+    }
+
+    .header-title.fading,
+    .header-sub.fading {
+      opacity: 0;
+    }
+
+    /* ── Inline submit error ───────────────────────────── */
+
+    .submit-error {
+      margin-top: 12px;
+      padding: 11px 15px;
+      border-radius: var(--r-sm);
+      background: var(--error-dim);
+      border: 1px solid var(--border-error);
+      color: rgba(232, 57, 42, 0.9);
+      font-size: 12px;
+      line-height: 1.55;
+      text-align: center;
+      animation: fade-up 0.3s ease both;
+    }
+
+    /* ── Form submitting overlay ───────────────────────── */
+
+    .form-body.submitting #form-fields,
+    .form-body.submitting .submit-divider {
+      opacity: 0.38;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    /* ── Auto-close progress bar ───────────────────────── */
+
+    .close-progress-wrap {
+      width: 48px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      margin: 10px auto 0;
+      overflow: hidden;
+    }
+
+    .close-progress-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--text-quaternary);
+      border-radius: 99px;
+      transform-origin: left;
+      animation: drain-bar 4s linear both;
+    }
+
+    @keyframes drain-bar {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
+    }
   </style>
 </head>
 <body>
@@ -1701,6 +1860,7 @@
       </button>
 
       <div class="disclaimer">Our support team will review and respond to your case.</div>
+      <div class="submit-error" id="submit-error" hidden></div>
     </form>
 
     <section class="success-state" id="success-state" aria-live="polite">
@@ -1749,7 +1909,10 @@
         <span class="success-ref-val" id="success-ref-val">-</span>
       </div>
 
-      <div class="success-closing">You can close this window.</div>
+      <div class="success-closing" id="success-closing">Closing automatically…</div>
+      <div class="close-progress-wrap" id="close-progress-wrap" hidden>
+        <div class="close-progress-bar" id="close-progress-bar"></div>
+      </div>
     </section>
   </div>
 
@@ -1912,7 +2075,11 @@ link_request: {
         spinner: document.getElementById('spinner'),
         btnLabel: document.getElementById('btn-label'),
         btnArrow: document.getElementById('btn-arrow'),
-        categoryGrid: document.getElementById('category-grid')
+        categoryGrid: document.getElementById('category-grid'),
+        submitError: document.getElementById('submit-error'),
+        successClosing: document.getElementById('success-closing'),
+        closeProgressWrap: document.getElementById('close-progress-wrap'),
+        closeProgressBar: document.getElementById('close-progress-bar')
       };
 
       const getById = (id) => document.getElementById(id);
@@ -2006,7 +2173,8 @@ link_request: {
         withdrawal:      { accent: 'rgba(246,173,85,0.55)',  glow: 'rgba(246,173,85,0.12)',  iconBg: 'rgba(246,173,85,0.07)',  iconBorder: 'rgba(246,173,85,0.14)',  iconColor: '#f6ad55', desc: 'Report a withdrawal problem or delay' },
         trading:         { accent: 'rgba(183,148,244,0.55)', glow: 'rgba(183,148,244,0.12)', iconBg: 'rgba(183,148,244,0.07)', iconBorder: 'rgba(183,148,244,0.14)', iconColor: '#b794f4', desc: 'Execution, slippage or platform issues' },
         ib_conversion:   { accent: 'rgba(232,57,42,0.55)',   glow: 'rgba(232,57,42,0.12)',   iconBg: 'rgba(232,57,42,0.07)',   iconBorder: 'rgba(232,57,42,0.14)',   iconColor: '#e8392a', desc: 'Upgrade a client account to IB status' },
-        general_inquiry: { accent: 'rgba(113,128,150,0.28)', glow: 'rgba(113,128,150,0.05)', iconBg: 'rgba(255,255,255,0.025)', iconBorder: 'rgba(255,255,255,0.05)', iconColor: '#7d8797', desc: 'Non-standard or one-off requests' }
+        general_inquiry: { accent: 'rgba(113,128,150,0.28)', glow: 'rgba(113,128,150,0.05)', iconBg: 'rgba(255,255,255,0.025)', iconBorder: 'rgba(255,255,255,0.05)', iconColor: '#7d8797', desc: 'Non-standard or one-off requests' },
+        link_request:    { accent: 'rgba(99,179,237,0.45)',  glow: 'rgba(99,179,237,0.10)',  iconBg: 'rgba(99,179,237,0.07)',   iconBorder: 'rgba(99,179,237,0.14)',   iconColor: '#63b3ed', desc: 'Request a branded referral URL' }
       };
 
       const chevronRight = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -2044,20 +2212,55 @@ link_request: {
         `;
       };
 
+      const ibParentRow = () => {
+        const m = CAT_META['ib_move'];
+        return `
+          <button
+            class="cat-row ib-parent"
+            type="button"
+            data-action="toggle-ib"
+            style="
+              --cat-accent: rgba(99,179,237,0.5);
+              --cat-glow: rgba(99,179,237,0.10);
+              --cat-icon-bg: rgba(99,179,237,0.07);
+              --cat-icon-border: rgba(99,179,237,0.14);
+              --cat-icon-color: #63b3ed;
+            "
+          >
+            <div class="cat-row-inner">
+              <div class="cat-icon-shell">
+                ${iconSlot('briefcase')}
+              </div>
+              <div class="cat-copy">
+                <span class="cat-name">IB Requests</span>
+                <span class="cat-desc">Move, conversion &amp; custom link</span>
+              </div>
+              <span class="cat-arrow">${chevronRight}</span>
+              <span class="cat-check">${checkSmall}</span>
+            </div>
+          </button>
+          <div class="cat-sub-wrap" id="ib-sub-wrap">
+            <div class="cat-sub-wrap-inner">
+              ${[
+                { category: 'ib_move',       icon: 'repeat',   title: 'IB Move',       desc: 'Transfer a client to an IB partner network' },
+                { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion', desc: 'Upgrade a client account to IB status' },
+                { category: 'link_request',  icon: 'link',     title: 'Custom Link',   desc: 'Request a branded referral URL' }
+              ].map(categoryRow).join('')}
+            </div>
+          </div>
+        `;
+      };
+
       const buildCategoryMarkup = () => {
-        const primaryKeys = ['ib_move', 'deposit', 'withdrawal', 'trading'];
+        const primaryKeys = ['deposit', 'withdrawal', 'trading'];
         const primary = CATEGORY_OPTIONS.filter((item) => primaryKeys.includes(item.category));
-        const ibConversion = CATEGORY_OPTIONS.find((item) => item.category === 'ib_conversion');
-        const linkRequest = CATEGORY_OPTIONS.find((item) => item.category === 'link_request');
         const generalInquiry = CATEGORY_OPTIONS.find((item) => item.category === 'general_inquiry');
 
         return `
           <div class="category-layout">
             <div class="category-group">
-              <div class="category-group-label"><span>Select a category</span></div>
               ${primary.map(categoryRow).join('')}
-              ${categoryRow(ibConversion)}
-              ${categoryRow(linkRequest)}
+              ${ibParentRow()}
             </div>
             <div class="category-group">
               <div class="category-group-label"><span>Other Requests</span></div>
@@ -2530,12 +2733,12 @@ const buildLinkRequestMarkup = () => `
         const input = getById(id);
         if (!input) return false;
         const value = input.value.trim();
-        const valid = value.length > 3;
+        const valid = value.length >= 10;
         return setInputState(id, {
           valid,
           error: input.value.length > 0 && !valid,
           errorId,
-          errorText: 'Please describe the issue.'
+          errorText: 'Please describe the issue (at least 10 characters).'
         });
       }
 function validateSlug(id, errorId) {
@@ -2615,12 +2818,38 @@ function validateBrokerUrl(id, errorId) {
         state.category = '';
         state.submitting = false;
         resetStateSelections();
-        el.categoryScreen.hidden = false;
-        el.formState.hidden = true;
+
+        // Animate form out, then swap screens
+        if (!el.formState.hidden) {
+          el.formState.classList.add('screen-fade-out');
+          window.setTimeout(() => {
+            el.formState.classList.remove('screen-fade-out');
+            el.formState.hidden = true;
+            el.categoryScreen.hidden = false;
+            el.categoryScreen.classList.add('screen-slide-in');
+            el.categoryScreen.addEventListener('animationend', () => {
+              el.categoryScreen.classList.remove('screen-slide-in');
+            }, { once: true });
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }, 180);
+        } else {
+          el.categoryScreen.hidden = false;
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
         el.successState.style.display = 'none';
         resetSuccessFlow();
-        el.headerTitle.innerHTML = 'VIP <em>Support</em><br>Desk';
-        el.headerSub.textContent = 'Priority assistance for StoicFX partners and high-value clients.';
+
+        // Fade header back to default
+        el.headerTitle.classList.add('fading');
+        el.headerSub.classList.add('fading');
+        window.setTimeout(() => {
+          el.headerTitle.innerHTML = 'VIP <em>Support</em><br>Desk';
+          el.headerSub.textContent = 'Priority assistance for StoicFX partners and high-value clients.';
+          el.headerTitle.classList.remove('fading');
+          el.headerSub.classList.remove('fading');
+        }, 160);
+
         el.btnLabel.textContent = 'Submit';
         tg?.disableClosingConfirmation?.();
         state.dirty = false;
@@ -2634,10 +2863,30 @@ function validateBrokerUrl(id, errorId) {
         state.category = category;
         state.submitting = false;
         resetStateSelections();
-        setHeaderForCategory(category);
         renderForm();
-        el.categoryScreen.hidden = true;
-        el.formState.hidden = false;
+
+        // Fade header to new text
+        el.headerTitle.classList.add('fading');
+        el.headerSub.classList.add('fading');
+        window.setTimeout(() => {
+          setHeaderForCategory(category);
+          el.headerTitle.classList.remove('fading');
+          el.headerSub.classList.remove('fading');
+        }, 160);
+
+        // Animate category screen out, then show form
+        el.categoryScreen.classList.add('screen-fade-out');
+        window.setTimeout(() => {
+          el.categoryScreen.classList.remove('screen-fade-out');
+          el.categoryScreen.hidden = true;
+          el.formState.hidden = false;
+          el.formState.classList.add('screen-slide-in');
+          el.formState.addEventListener('animationend', () => {
+            el.formState.classList.remove('screen-slide-in');
+          }, { once: true });
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }, 180);
+
         el.successState.style.display = 'none';
 
         if (tg?.BackButton) {
@@ -2922,16 +3171,35 @@ return base;
         window.setTimeout(() => setStepState('reference', 'is-done'), 1450);
       }
 
+      function showSubmitError(msg) {
+        if (!el.submitError) return;
+        el.submitError.textContent = msg;
+        el.submitError.hidden = false;
+        // re-trigger animation on repeat errors
+        el.submitError.classList.remove('submit-error');
+        void el.submitError.offsetWidth;
+        el.submitError.classList.add('submit-error');
+      }
+
+      function clearSubmitError() {
+        if (!el.submitError) return;
+        el.submitError.hidden = true;
+        el.submitError.textContent = '';
+      }
+
       async function sendData() {
         if (!state.category || state.submitting) return;
         updateReadyState();
         if (el.submitBtn.disabled) return;
 
+        clearSubmitError();
         state.submitting = true;
         el.submitBtn.disabled = true;
+        el.submitBtn.classList.remove('ready');
         el.spinner.style.display = 'block';
         el.btnLabel.textContent = 'Submitting...';
         el.btnArrow.hidden = true;
+        el.formState.classList.add('submitting');
 
         try {
           const response = await fetch(WEBHOOKS[state.category], {
@@ -2956,22 +3224,44 @@ return base;
           state.dirty = false;
 
           el.formState.hidden = true;
+          el.formState.classList.remove('submitting');
           el.successState.style.display = 'flex';
           playSuccessFlow();
 
-          if (tg) window.setTimeout(() => tg.close(), 4200);
+          // Countdown + progress bar
+          if (tg) {
+            if (el.closeProgressWrap) el.closeProgressWrap.hidden = false;
+            let remaining = 4;
+            const tick = () => {
+              remaining--;
+              if (el.successClosing) {
+                el.successClosing.textContent = remaining > 0
+                  ? `Closing in ${remaining}s\u2026`
+                  : 'Closing\u2026';
+              }
+            };
+            const interval = window.setInterval(tick, 1000);
+            window.setTimeout(() => {
+              window.clearInterval(interval);
+              tg.close();
+            }, 4000);
+          } else {
+            if (el.successClosing) el.successClosing.textContent = 'You can close this window.';
+          }
         } catch (error) {
           console.error('Submission failed:', error);
           tg?.HapticFeedback?.notificationOccurred?.('error');
           state.submitting = false;
+          el.formState.classList.remove('submitting');
           el.spinner.style.display = 'none';
           el.btnLabel.textContent = CONFIGS[state.category]?.btnLabel || 'Submit';
           updateReadyState();
           const isGenericError = !error.message || error.message.startsWith('Server error');
-          const alertMsg = isGenericError
-            ? 'Submission failed. Please try again or contact our team directly.'
+          const errMsg = isGenericError
+            ? 'Submission failed. Please try again or contact support directly.'
             : error.message;
-          (tg?.showAlert ?? window.alert)(alertMsg);
+          showSubmitError(errMsg);
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
       }
 
@@ -2999,6 +3289,15 @@ return base;
 
           if (action === 'select-category') {
             showForm(trigger.dataset.category || '');
+            return;
+          }
+
+          if (action === 'toggle-ib') {
+            const subWrap = document.getElementById('ib-sub-wrap');
+            const isOpen = subWrap?.classList.contains('open');
+            subWrap?.classList.toggle('open', !isOpen);
+            trigger.classList.toggle('expanded', !isOpen);
+            tg?.HapticFeedback?.selectionChanged?.();
             return;
           }
 
@@ -3034,7 +3333,6 @@ return base;
       }
 
       function init() {
-        initStaticIcons();
         el.categoryGrid.innerHTML = buildCategoryMarkup();
         initStaticIcons();
         setText();
