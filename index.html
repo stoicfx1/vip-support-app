@@ -38,7 +38,7 @@
       --text-primary: #eceef3;
       --text-secondary: #8b91a1;
       --text-tertiary: #535a6b;
-      --text-quaternary: #353b4a;
+      --text-quaternary: #4a5268;
 
       --success: #34c759;
       --success-dim: rgba(52, 199, 89, 0.1);
@@ -590,6 +590,12 @@
       border-color: var(--border-valid) !important;
     }
 
+    input.valid:focus,
+    select.valid:focus,
+    textarea.valid:focus {
+      box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1), 0 0 0 1px rgba(52, 199, 89, 0.2) !important;
+    }
+
     .error {
       border-color: var(--border-error) !important;
       box-shadow: 0 0 0 3px var(--error-dim);
@@ -1118,6 +1124,7 @@
 
     .info-callout {
       margin-top: var(--sp-2);
+      margin-bottom: var(--sp-5);
       padding: 12px 16px;
       border: 1px solid rgba(232, 57, 42, 0.12);
       border-radius: var(--r-sm);
@@ -1780,6 +1787,60 @@
       transition: opacity 0.2s ease;
     }
 
+    /* ── Copy ref button ──────────────────────────────── */
+
+    .copy-ref-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 6px;
+      padding: 3px 9px;
+      border: 1px solid rgba(52, 199, 89, 0.22);
+      border-radius: var(--r-full);
+      background: rgba(52, 199, 89, 0.07);
+      color: var(--success);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--t-fast) ease, border-color var(--t-fast) ease, opacity var(--t-fast) ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .copy-ref-btn:active {
+      opacity: 0.7;
+    }
+
+    .copy-ref-btn.copied {
+      border-color: rgba(52, 199, 89, 0.4);
+      background: rgba(52, 199, 89, 0.14);
+    }
+
+    .copy-ref-btn svg {
+      width: 10px;
+      height: 10px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      flex-shrink: 0;
+    }
+
+    /* ── Char counter ──────────────────────────────────── */
+
+    .char-counter {
+      font-size: 10px;
+      color: var(--text-quaternary);
+      font-weight: 400;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+      transition: color var(--t-fast) ease;
+    }
+
+    .char-counter.near-limit {
+      color: var(--red);
+    }
+
     /* ── Auto-close progress bar ───────────────────────── */
 
     .close-progress-wrap {
@@ -1907,6 +1968,10 @@
         <span class="success-ref-label">Case Ref</span>
         <div class="success-ref-sep"></div>
         <span class="success-ref-val" id="success-ref-val">-</span>
+        <button class="copy-ref-btn" id="copy-ref-btn" type="button" aria-label="Copy case reference">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copy-ref-label">Copy</span>
+        </button>
       </div>
 
       <div class="success-closing" id="success-closing">Closing automatically…</div>
@@ -1969,7 +2034,10 @@
           success: 'IB Move<br>Submitted',
           successBody: 'Your IB move request has been received and is pending review.',
           successNext: 'Our team will process this and confirm once complete.',
-          btnLabel: 'Submit IB Move Request'
+          btnLabel: 'Submit IB Move Request',
+          stepReceived: 'IB move request received',
+          stepRouted: 'Routed to partner operations',
+          stepRef: 'Reference assigned to your case'
         },
         deposit: {
           title: 'Deposit <em>Issue</em><br>Report',
@@ -1977,7 +2045,10 @@
           success: 'Deposit Issue<br>Reported',
           successBody: 'Your deposit issue has been logged and assigned to our team.',
           successNext: 'We\'ll investigate and follow up with you shortly.',
-          btnLabel: 'Report Deposit Issue'
+          btnLabel: 'Report Deposit Issue',
+          stepReceived: 'Deposit issue logged',
+          stepRouted: 'Routed to payments team',
+          stepRef: 'Reference assigned to your case'
         },
         withdrawal: {
           title: 'Withdrawal <em>Issue</em><br>Report',
@@ -1985,7 +2056,10 @@
           success: 'Withdrawal Issue<br>Reported',
           successBody: 'Your withdrawal issue has been logged and assigned to our team.',
           successNext: 'We\'ll investigate and follow up with you shortly.',
-          btnLabel: 'Report Withdrawal Issue'
+          btnLabel: 'Report Withdrawal Issue',
+          stepReceived: 'Withdrawal issue logged',
+          stepRouted: 'Routed to payments team',
+          stepRef: 'Reference assigned to your case'
         },
         trading: {
           title: 'Trading <em>Issue</em><br>Report',
@@ -1993,7 +2067,10 @@
           success: 'Trading Issue<br>Reported',
           successBody: 'Your trading issue has been logged. Our team will investigate and respond.',
           successNext: 'Keep any relevant screenshots or position IDs handy.',
-          btnLabel: 'Report Trading Issue'
+          btnLabel: 'Report Trading Issue',
+          stepReceived: 'Trading issue logged',
+          stepRouted: 'Routed to dealing desk',
+          stepRef: 'Reference assigned to your case'
         },
         ib_conversion: {
           title: 'IB <em>Conversion</em><br>Request',
@@ -2001,24 +2078,33 @@
           success: 'Conversion<br>Requested',
           successBody: 'Your IB conversion request has been received and will be processed by our team.',
           successNext: 'The client will be notified once their account has been upgraded.',
-          btnLabel: 'Submit Conversion Request'
+          btnLabel: 'Submit Conversion Request',
+          stepReceived: 'Conversion request received',
+          stepRouted: 'Routed to account management',
+          stepRef: 'Reference assigned to your case'
         },
         general_inquiry: {
-  title: 'General <em>Inquiry</em><br>Request',
-  sub: 'Use this route for non-standard or one-off partner requests that do not fit the categories above.',
-  success: 'General Inquiry<br>Submitted',
-  successBody: 'Your inquiry has been received and routed for review.',
-  successNext: 'We\'ll review the details and direct it to the right team.',
-  btnLabel: 'Submit General Inquiry'
-},
-link_request: {
-  title: 'Custom Link<br><em>Request</em>',
-  sub: 'Request a short branded URL for your IB referral link — e.g. stoicfx.com/yourname.',
-  success: 'Link Request<br>Submitted',
-  successBody: 'Your custom link request has been received and is being processed.',
-  successNext: 'You\'ll be notified in this group once your link is approved and live.',
-  btnLabel: 'Submit Link Request'
-}
+          title: 'General <em>Inquiry</em><br>Request',
+          sub: 'Use this route for non-standard or one-off partner requests that do not fit the categories above.',
+          success: 'General Inquiry<br>Submitted',
+          successBody: 'Your inquiry has been received and routed for review.',
+          successNext: 'We\'ll review the details and direct it to the right team.',
+          btnLabel: 'Submit General Inquiry',
+          stepReceived: 'Inquiry received',
+          stepRouted: 'Routed to the right team',
+          stepRef: 'Reference assigned to your case'
+        },
+        link_request: {
+          title: 'Custom Link<br><em>Request</em>',
+          sub: 'Request a short branded URL for your IB referral link — e.g. stoicfx.com/yourname.',
+          success: 'Link Request<br>Submitted',
+          successBody: 'Your custom link request has been received and is being processed.',
+          successNext: 'You\'ll be notified in this group once your link is approved and live.',
+          btnLabel: 'Submit Link Request',
+          stepReceived: 'Link request received',
+          stepRouted: 'Slug availability being checked',
+          stepRef: 'Reference assigned to your case'
+        }
       };
 
       const WEBHOOKS = {
@@ -2055,7 +2141,7 @@ link_request: {
       const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const numericRx = /^\d+$/;
       const amountRx = /^\d+(\.\d{0,2})?$/;
-      const txRx = /^[a-zA-Z0-9]{8,}$/;
+      const txRx = /^(0x)?[a-fA-F0-9]{32,}$/;
       const slugRx = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
 
       const el = {
@@ -2079,7 +2165,9 @@ link_request: {
         submitError: document.getElementById('submit-error'),
         successClosing: document.getElementById('success-closing'),
         closeProgressWrap: document.getElementById('close-progress-wrap'),
-        closeProgressBar: document.getElementById('close-progress-bar')
+        closeProgressBar: document.getElementById('close-progress-bar'),
+        copyRefBtn: document.getElementById('copy-ref-btn'),
+        copyRefLabel: document.getElementById('copy-ref-label')
       };
 
       const getById = (id) => document.getElementById(id);
@@ -2113,24 +2201,31 @@ link_request: {
         extraAttrs = '',
         minHeight = '',
         maxlength = textarea ? '2000' : '200'
-      }) => `
-        <div class="field">
-          ${label || hint ? `
-          <div class="field-label-row">
-            ${label ? `<label for="${id}">${label}</label>` : `<span></span>`}
-            ${hint ? `<span class="field-hint">${hint}</span>` : ''}
-          </div>` : ''}
-          <div class="input-wrap">
-            ${iconName ? inputIcon(iconName, textarea) : ''}
-            ${
-              textarea
-                ? `<textarea id="${id}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${minHeight ? `style="min-height:${minHeight}"` : ''} ${extraAttrs}></textarea>`
-                : `<input id="${id}" type="${type}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${inputmode ? `inputmode="${inputmode}"` : ''} ${extraAttrs}>`
-            }
+      }) => {
+        const maxLen = Number(maxlength);
+        const showCounter = textarea;
+        return `
+          <div class="field">
+            ${label || hint || showCounter ? `
+            <div class="field-label-row">
+              ${label ? `<label for="${id}">${label}</label>` : `<span></span>`}
+              <span style="display:flex;align-items:center;gap:8px;">
+                ${hint ? `<span class="field-hint">${hint}</span>` : ''}
+                ${showCounter ? `<span class="char-counter" id="${id}-counter">0 / ${maxLen}</span>` : ''}
+              </span>
+            </div>` : ''}
+            <div class="input-wrap">
+              ${iconName ? inputIcon(iconName, textarea) : ''}
+              ${
+                textarea
+                  ? `<textarea id="${id}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${minHeight ? `style="min-height:${minHeight}"` : ''} ${extraAttrs}></textarea>`
+                  : `<input id="${id}" type="${type}" placeholder="${placeholder}" autocomplete="${autocomplete}" autocapitalize="${autocapitalize}" maxlength="${maxlength}" ${inputmode ? `inputmode="${inputmode}"` : ''} ${extraAttrs}>`
+              }
+            </div>
+            ${fieldError(errorId, errorText)}
           </div>
-          ${fieldError(errorId, errorText)}
-        </div>
-      `;
+        `;
+      };
 
       const bareInputReveal = (id, inputId, placeholder) => `
         <div class="reveal-wrap" id="${id}">
@@ -2536,6 +2631,19 @@ link_request: {
           })
         }
 
+        ${
+          textField({
+            id: 'account_number',
+            label: 'Trading Account Number',
+            hint: 'Optional — helps confirm the right account',
+            placeholder: 'Numbers only',
+            inputmode: 'numeric',
+            iconName: 'hash',
+            errorId: 'account_err',
+            errorText: 'Account numbers contain digits only.'
+          })
+        }
+
         <div class="info-callout">
           <p>This will flag the client account for upgrade to IB partner status. Ensure the email matches exactly what is registered on the platform.</p>
         </div>
@@ -2848,7 +2956,7 @@ function validateBrokerUrl(id, errorId) {
           el.headerSub.textContent = 'Priority assistance for StoicFX partners and high-value clients.';
           el.headerTitle.classList.remove('fading');
           el.headerSub.classList.remove('fading');
-        }, 160);
+        }, 180);
 
         el.btnLabel.textContent = 'Submit';
         tg?.disableClosingConfirmation?.();
@@ -2872,7 +2980,7 @@ function validateBrokerUrl(id, errorId) {
           setHeaderForCategory(category);
           el.headerTitle.classList.remove('fading');
           el.headerSub.classList.remove('fading');
-        }, 160);
+        }, 180);
 
         // Animate category screen out, then show form
         el.categoryScreen.classList.add('screen-fade-out');
@@ -3047,7 +3155,18 @@ function validateBrokerUrl(id, errorId) {
         }
 
         if (state.category === 'ib_conversion') {
-          ready = validateEmail('client_email', 'client_err');
+          const emailValid = validateEmail('client_email', 'client_err');
+          const acctInput = getById('account_number');
+          const acctVal = acctInput?.value.trim() || '';
+          const acctValid = !acctVal || numericRx.test(acctVal);
+          if (!acctValid) {
+            setInputState('account_number', { valid: false, error: true, errorId: 'account_err', errorText: 'Account numbers contain digits only.' });
+          } else if (acctVal) {
+            setInputState('account_number', { valid: true, error: false });
+          } else {
+            acctInput?.classList.remove('valid', 'error');
+          }
+          ready = emailValid && acctValid;
         }
 
       if (state.category === 'general_inquiry') {
@@ -3118,10 +3237,13 @@ if (state.category === 'link_request') {
         }
 
         if (state.category === 'ib_conversion') {
-          return {
+          const payload = {
             ...base,
             client_email: getById('client_email').value.trim().toLowerCase()
           };
+          const acct = getById('account_number')?.value.trim();
+          if (acct) payload.account_number = acct;
+          return payload;
         }
 
         if (state.category === 'general_inquiry') {
@@ -3161,8 +3283,25 @@ return base;
         ['received', 'routed', 'reference'].forEach((name) => setStepState(name, ''));
       }
 
+      function updateStepText() {
+        const cfg = CONFIGS[state.category];
+        if (!cfg) return;
+        const steps = [
+          { name: 'received',  titleKey: 'stepReceived' },
+          { name: 'routed',    titleKey: 'stepRouted'   },
+          { name: 'reference', titleKey: 'stepRef'      }
+        ];
+        steps.forEach(({ name, titleKey }) => {
+          const step = el.successFlow?.querySelector(`[data-step="${name}"]`);
+          if (!step || !cfg[titleKey]) return;
+          const titleEl = step.querySelector('.success-step-title');
+          if (titleEl) titleEl.textContent = cfg[titleKey];
+        });
+      }
+
       function playSuccessFlow() {
         resetSuccessFlow();
+        updateStepText();
         window.setTimeout(() => setStepState('received', 'is-live'), 80);
         window.setTimeout(() => setStepState('received', 'is-done'), 420);
         window.setTimeout(() => setStepState('routed', 'is-live'), 520);
@@ -3189,8 +3328,10 @@ return base;
 
       async function sendData() {
         if (!state.category || state.submitting) return;
+        // Double-submit guard: disable button immediately before async work
+        el.submitBtn.disabled = true;
         updateReadyState();
-        if (el.submitBtn.disabled) return;
+        if (state.submitting) return;
 
         clearSubmitError();
         state.submitting = true;
@@ -3316,9 +3457,20 @@ return base;
           }
         });
 
-        el.formState.addEventListener('input', () => {
+        el.formState.addEventListener('input', (event) => {
           markDirty();
           updateReadyState();
+          // Update char counter if a textarea changed
+          const ta = event.target.closest('textarea');
+          if (ta && ta.id) {
+            const counter = document.getElementById(`${ta.id}-counter`);
+            if (counter) {
+              const max = Number(ta.getAttribute('maxlength') || 2000);
+              const len = ta.value.length;
+              counter.textContent = `${len} / ${max}`;
+              counter.classList.toggle('near-limit', len >= max * 0.9);
+            }
+          }
         });
 
         el.formState.addEventListener('change', () => {
@@ -3330,6 +3482,24 @@ return base;
           event.preventDefault();
           await sendData();
         });
+
+        // Copy case reference to clipboard
+        if (el.copyRefBtn) {
+          el.copyRefBtn.addEventListener('click', () => {
+            const refText = el.successRef?.textContent || state.ref;
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(refText).then(() => {
+                el.copyRefBtn.classList.add('copied');
+                if (el.copyRefLabel) el.copyRefLabel.textContent = 'Copied';
+                tg?.HapticFeedback?.notificationOccurred?.('success');
+                window.setTimeout(() => {
+                  el.copyRefBtn.classList.remove('copied');
+                  if (el.copyRefLabel) el.copyRefLabel.textContent = 'Copy';
+                }, 2200);
+              }).catch(() => {});
+            }
+          });
+        }
       }
 
       function init() {
