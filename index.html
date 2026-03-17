@@ -1858,7 +1858,7 @@
       background: var(--text-quaternary);
       border-radius: 99px;
       transform-origin: left;
-      animation: drain-bar 7s linear both;
+      animation: drain-bar 10s linear both;
     }
 
     @keyframes drain-bar {
@@ -2631,19 +2631,6 @@
           })
         }
 
-        ${
-          textField({
-            id: 'account_number',
-            label: 'Trading Account Number',
-            hint: 'Optional — helps confirm the right account',
-            placeholder: 'Numbers only',
-            inputmode: 'numeric',
-            iconName: 'hash',
-            errorId: 'account_err',
-            errorText: 'Account numbers contain digits only.'
-          })
-        }
-
         <div class="info-callout">
           <p>This will flag the client account for upgrade to IB partner status. Ensure the email matches exactly what is registered on the platform.</p>
         </div>
@@ -3156,17 +3143,7 @@ function validateBrokerUrl(id, errorId) {
 
         if (state.category === 'ib_conversion') {
           const emailValid = validateEmail('client_email', 'client_err');
-          const acctInput = getById('account_number');
-          const acctVal = acctInput?.value.trim() || '';
-          const acctValid = !acctVal || numericRx.test(acctVal);
-          if (!acctValid) {
-            setInputState('account_number', { valid: false, error: true, errorId: 'account_err', errorText: 'Account numbers contain digits only.' });
-          } else if (acctVal) {
-            setInputState('account_number', { valid: true, error: false });
-          } else {
-            acctInput?.classList.remove('valid', 'error');
-          }
-          ready = emailValid && acctValid;
+          ready = emailValid;
         }
 
       if (state.category === 'general_inquiry') {
@@ -3237,13 +3214,10 @@ if (state.category === 'link_request') {
         }
 
         if (state.category === 'ib_conversion') {
-          const payload = {
+          return {
             ...base,
             client_email: getById('client_email').value.trim().toLowerCase()
           };
-          const acct = getById('account_number')?.value.trim();
-          if (acct) payload.account_number = acct;
-          return payload;
         }
 
         if (state.category === 'general_inquiry') {
@@ -3372,7 +3346,7 @@ return base;
           // Countdown + progress bar
           if (tg) {
             if (el.closeProgressWrap) el.closeProgressWrap.hidden = false;
-            let remaining = 7;
+            let remaining = 10;
             const tick = () => {
               remaining--;
               if (el.successClosing) {
@@ -3385,7 +3359,7 @@ return base;
             window.setTimeout(() => {
               window.clearInterval(interval);
               tg.close();
-            }, 7000);
+            }, 10000);
           } else {
             if (el.successClosing) el.successClosing.textContent = 'You can close this window.';
           }
