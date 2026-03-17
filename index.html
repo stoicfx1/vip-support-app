@@ -1858,7 +1858,7 @@
       background: var(--text-quaternary);
       border-radius: 99px;
       transform-origin: left;
-      animation: drain-bar 4s linear both;
+      animation: drain-bar 7s linear both;
     }
 
     @keyframes drain-bar {
@@ -1957,7 +1957,7 @@
           <span class="success-step-dot" aria-hidden="true"></span>
           <div class="success-step-copy">
             <div class="success-step-title">Reference generated</div>
-            <div class="success-step-meta">Use the case reference below for follow-up</div>
+            <div class="success-step-meta">Use the request reference below for follow-up</div>
           </div>
         </div>
       </div>
@@ -1965,10 +1965,10 @@
       <div class="success-rule"></div>
 
       <div class="success-ref-chip">
-        <span class="success-ref-label">Case Ref</span>
+        <span class="success-ref-label">Request Ref</span>
         <div class="success-ref-sep"></div>
         <span class="success-ref-val" id="success-ref-val">-</span>
-        <button class="copy-ref-btn" id="copy-ref-btn" type="button" aria-label="Copy case reference">
+        <button class="copy-ref-btn" id="copy-ref-btn" type="button" aria-label="Copy request reference">
           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span id="copy-ref-label">Copy</span>
         </button>
@@ -3372,7 +3372,7 @@ return base;
           // Countdown + progress bar
           if (tg) {
             if (el.closeProgressWrap) el.closeProgressWrap.hidden = false;
-            let remaining = 4;
+            let remaining = 7;
             const tick = () => {
               remaining--;
               if (el.successClosing) {
@@ -3385,7 +3385,7 @@ return base;
             window.setTimeout(() => {
               window.clearInterval(interval);
               tg.close();
-            }, 4000);
+            }, 7000);
           } else {
             if (el.successClosing) el.successClosing.textContent = 'You can close this window.';
           }
@@ -3508,11 +3508,8 @@ return base;
         setText();
         showCategoryScreen();
         bindEvents();
-        deleteButtonMessage();
+        if (startParam) { deleteButtonMessage(); }
       }
 
       init();
-    })();
-  </script>
-</body>
-</html>
+    })()
