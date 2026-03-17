@@ -2681,14 +2681,14 @@
       `;
 const buildLinkRequestMarkup = () => `
   <div class="info-callout">
-    <p>Your branded link will redirect traders directly to your IB registration page. Example: <strong>stoicfx.com/ahmed</strong>. You can request one link per IB plan.</p>
+    <p>Your branded link will redirect traders directly to your IB registration page. Example: <strong>stoicfx.com/yourname</strong>. You can request one link per IB plan.</p>
   </div>
 
   ${textField({
     id: 'link_slug',
     label: 'Your Custom Slug',
     hint: 'stoicfx.com/...',
-    placeholder: 'e.g. ahmed or ahmed-fx',
+    placeholder: 'e.g. yourname or yourname-fx',
     iconName: 'link',
     errorId: 'slug_err',
     errorText: 'Use 3–30 lowercase letters, numbers, or hyphens. Cannot start or end with a hyphen.',
