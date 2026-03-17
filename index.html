@@ -1795,7 +1795,8 @@
         { category: 'withdrawal', icon: 'arrowUpRightCircle', title: 'Withdrawal Issue' },
         { category: 'trading', icon: 'trendUp', title: 'Trading Issue' },
         { category: 'ib_conversion', icon: 'keyRound', title: 'IB Conversion', desc: 'Upgrade a client account to IB partner status' },
-        { category: 'general_inquiry', icon: 'briefcase', title: 'General Inquiry', desc: 'Non-standard or one-off requests', tone: 'tertiary' }
+        { category: 'general_inquiry', icon: 'briefcase', title: 'General Inquiry', desc: 'Non-standard or one-off requests', tone: 'tertiary' },
+	{ category: 'link_request', icon: 'link', title: 'Custom Link', desc: 'Request a branded referral URL', tone: 'secondary' }
       ];
 
       const CONFIGS = {
@@ -1840,13 +1841,21 @@
           btnLabel: 'Submit Conversion Request'
         },
         general_inquiry: {
-          title: 'General <em>Inquiry</em><br>Request',
-          sub: 'Use this route for non-standard or one-off partner requests that do not fit the categories above.',
-          success: 'General Inquiry<br>Submitted',
-          successBody: 'Your inquiry has been received and routed for review.',
-          successNext: 'We\'ll review the details and direct it to the right team.',
-          btnLabel: 'Submit General Inquiry'
-        }
+  title: 'General <em>Inquiry</em><br>Request',
+  sub: 'Use this route for non-standard or one-off partner requests that do not fit the categories above.',
+  success: 'General Inquiry<br>Submitted',
+  successBody: 'Your inquiry has been received and routed for review.',
+  successNext: 'We\'ll review the details and direct it to the right team.',
+  btnLabel: 'Submit General Inquiry'
+},
+link_request: {
+  title: 'Custom Link<br><em>Request</em>',
+  sub: 'Request a short branded URL for your IB referral link — e.g. stoicfx.com/yourname.',
+  success: 'Link Request<br>Submitted',
+  successBody: 'Your custom link request has been received and is being processed.',
+  successNext: 'You\'ll be notified in this group once your link is approved and live.',
+  btnLabel: 'Submit Link Request'
+}
       };
 
       const WEBHOOKS = {
@@ -1855,8 +1864,10 @@
         withdrawal: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-withdrawal',
         trading: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-trading',
         ib_conversion: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-ib-conversion',
-        general_inquiry: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-general-inquiry'
-      };
+        general_inquiry: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-general-inquiry',
+	link_request: 'https://stoicfx.app.n8n.cloud/webhook/stoicfx-link-request'
+
+	};
 
       const tg = window.Telegram?.WebApp;
       if (tg) {
@@ -1882,6 +1893,7 @@
       const numericRx = /^\d+$/;
       const amountRx = /^\d+(\.\d{0,2})?$/;
       const txRx = /^[a-zA-Z0-9]{8,}$/;
+      const slugRx = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
 
       const el = {
         headerTitle: document.getElementById('header-title'),
@@ -2036,6 +2048,7 @@
         const primaryKeys = ['ib_move', 'deposit', 'withdrawal', 'trading'];
         const primary = CATEGORY_OPTIONS.filter((item) => primaryKeys.includes(item.category));
         const ibConversion = CATEGORY_OPTIONS.find((item) => item.category === 'ib_conversion');
+        const linkRequest = CATEGORY_OPTIONS.find((item) => item.category === 'link_request');
         const generalInquiry = CATEGORY_OPTIONS.find((item) => item.category === 'general_inquiry');
 
         return `
@@ -2044,6 +2057,7 @@
               <div class="category-group-label"><span>Select a category</span></div>
               ${primary.map(categoryRow).join('')}
               ${categoryRow(ibConversion)}
+              ${categoryRow(linkRequest)}
             </div>
             <div class="category-group">
               <div class="category-group-label"><span>Other Requests</span></div>
@@ -2367,15 +2381,46 @@
           })
         }
       `;
+const buildLinkRequestMarkup = () => `
+  <div class="info-callout">
+    <p>Your branded link will redirect traders directly to your IB registration page. Example: <strong>stoicfx.com/ahmed</strong>. You can request one link per IB plan.</p>
+  </div>
 
+  ${textField({
+    id: 'link_slug',
+    label: 'Your Custom Slug',
+    hint: 'stoicfx.com/...',
+    placeholder: 'e.g. ahmed or ahmed-fx',
+    iconName: 'link',
+    errorId: 'slug_err',
+    errorText: 'Use 3–30 lowercase letters, numbers, or hyphens. Cannot start or end with a hyphen.',
+    autocapitalize: 'none',
+    autocomplete: 'off',
+    maxlength: '30'
+  })}
+
+  ${textField({
+    id: 'ib_url',
+    label: 'IB Registration URL',
+    hint: 'From your broker portal',
+    placeholder: 'https://broker.stoicfx.com/auth/register?...',
+    iconName: 'arrowUpRightCircle',
+    errorId: 'url_err',
+    errorText: 'Must be a valid https://broker.stoicfx.com/ URL.',
+    autocapitalize: 'none',
+    autocomplete: 'off',
+    maxlength: '500'
+  })}
+`;
       const renderers = {
-        ib_move: buildIbMoveMarkup,
-        deposit: () => buildFundsIssueMarkup('deposit'),
-        withdrawal: () => buildFundsIssueMarkup('withdrawal'),
-        trading: buildTradingMarkup,
-        ib_conversion: buildIbConversionMarkup,
-        general_inquiry: buildGeneralInquiryMarkup
-      };
+  ib_move: buildIbMoveMarkup,
+  deposit: () => buildFundsIssueMarkup('deposit'),
+  withdrawal: () => buildFundsIssueMarkup('withdrawal'),
+  trading: buildTradingMarkup,
+  ib_conversion: buildIbConversionMarkup,
+  general_inquiry: buildGeneralInquiryMarkup,
+  link_request: buildLinkRequestMarkup
+};
 
       function initStaticIcons() {
         document.querySelectorAll('[data-icon]').forEach((node) => {
@@ -2493,7 +2538,34 @@
           errorText: 'Please describe the issue.'
         });
       }
+function validateSlug(id, errorId) {
+  const input = getById(id);
+  if (!input) return false;
+  const value = input.value.trim();
+  const valid = Boolean(value) &&
+    value.length >= 3 &&
+    value.length <= 30 &&
+    slugRx.test(value);
+  return setInputState(id, {
+    valid,
+    error: Boolean(value) && !valid,
+    errorId,
+    errorText: 'Use 3–30 lowercase letters, numbers, or hyphens. Cannot start or end with a hyphen.'
+  });
+}
 
+function validateBrokerUrl(id, errorId) {
+  const input = getById(id);
+  if (!input) return false;
+  const value = input.value.trim();
+  const valid = Boolean(value) && value.startsWith('https://broker.stoicfx.com/');
+  return setInputState(id, {
+    valid,
+    error: Boolean(value) && !valid,
+    errorId,
+    errorText: 'Must be a valid https://broker.stoicfx.com/ URL.'
+  });
+}
       function validateTxHash(id, errorId) {
         const input = getById(id);
         if (!input) return true;
@@ -2729,11 +2801,17 @@
           ready = validateEmail('client_email', 'client_err');
         }
 
-        if (state.category === 'general_inquiry') {
-          const emailValid = validateEmail('client_email', 'client_err');
-          const descriptionValid = validateTextLength('issue_desc', 'desc_err', 10, 'Please describe your request.');
-          ready = emailValid && descriptionValid;
-        }
+      if (state.category === 'general_inquiry') {
+  const emailValid = validateEmail('client_email', 'client_err');
+  const descriptionValid = validateTextLength('issue_desc', 'desc_err', 10, 'Please describe your request.');
+  ready = emailValid && descriptionValid;
+}
+
+if (state.category === 'link_request') {
+  const slugValid = validateSlug('link_slug', 'slug_err');
+  const urlValid = validateBrokerUrl('ib_url', 'url_err');
+  ready = slugValid && urlValid;
+}
 
         el.submitBtn.disabled = !ready || state.submitting;
         el.btnArrow.hidden = !ready;
@@ -2798,15 +2876,23 @@
         }
 
         if (state.category === 'general_inquiry') {
-          return {
-            ...base,
-            client_email: getById('client_email').value.trim().toLowerCase(),
-            issue_description: getById('issue_desc').value.trim(),
-            additional_details: getById('additional_details')?.value.trim() || null
-          };
-        }
+  return {
+    ...base,
+    client_email: getById('client_email').value.trim().toLowerCase(),
+    issue_description: getById('issue_desc').value.trim(),
+    additional_details: getById('additional_details')?.value.trim() || null
+  };
+}
 
-        return base;
+if (state.category === 'link_request') {
+  return {
+    ...base,
+    slug: getById('link_slug').value.trim().toLowerCase(),
+    destination: getById('ib_url').value.trim()
+  };
+}
+
+return base;
       }
 
 
@@ -2854,8 +2940,14 @@
             body: JSON.stringify(buildPayload())
           });
 
+          const responseData = await response.json().catch(() => null);
+
           if (!response.ok) {
             throw new Error(`Server error: ${response.status}`);
+          }
+
+          if (state.category === 'link_request' && responseData?.status === 'error') {
+            throw new Error(responseData.error || 'Your request could not be processed. Please check your details and try again.');
           }
 
           tg?.HapticFeedback?.notificationOccurred?.('success');
@@ -2875,7 +2967,11 @@
           el.spinner.style.display = 'none';
           el.btnLabel.textContent = CONFIGS[state.category]?.btnLabel || 'Submit';
           updateReadyState();
-          (tg?.showAlert ?? window.alert)('Submission failed. Please try again or contact our team directly.');
+          const isGenericError = !error.message || error.message.startsWith('Server error');
+          const alertMsg = isGenericError
+            ? 'Submission failed. Please try again or contact our team directly.'
+            : error.message;
+          (tg?.showAlert ?? window.alert)(alertMsg);
         }
       }
 
